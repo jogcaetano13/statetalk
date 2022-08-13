@@ -31,7 +31,7 @@ Install the dependencies via ```build.gradle``` (app module).
 ```kotlin
 dependencies {
     ...
-    implementation("com.github.joel.libraries:communication:<latest_version>")
+    implementation("com.github.jogcaetano13:communication_android:<latest_version>")
 }
 ```
 
