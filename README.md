@@ -1,6 +1,8 @@
 # Communication Android
 ## Lightweight network library written in Kotlin
 
+[![](https://jitpack.io/v/jogcaetano13/communication_android.svg)](https://jitpack.io/#jogcaetano13/communication_android)
+
 ## Features
 
 - LiveData responses
@@ -29,7 +31,7 @@ Install the dependencies via ```build.gradle``` (app module).
 ```kotlin
 dependencies {
     ...
-    implementation("com.github.joel.libraries:communication:1.0.0")
+    implementation("com.github.joel.libraries:communication:<latest_version>")
 }
 ```
 
