@@ -10,7 +10,21 @@
 
 ## Installation
 
-Install the dependencies via ```build.gradle```.
+First you need to add the jitpack to ```settings.gradle```
+
+```kotlin
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+Install the dependencies via ```build.gradle``` (app module).
 
 ```kotlin
 dependencies {
