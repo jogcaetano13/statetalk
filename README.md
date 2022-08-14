@@ -65,6 +65,8 @@ val response: Flow<ResultState<Model>> = client.call {
 
 ##### Paging response
 
+You don't need to provide the page, it will be increased automatically when it needs.
+
 ```kotlin
 val response: Flow<ResultState<PagingData<Model>>> = call {
     path = PATH
