@@ -1,6 +1,8 @@
 # Communication Android
 ## Lightweight network library written in Kotlin
 
+[![](https://jitpack.io/v/jogcaetano13/communication_android.svg)](https://jitpack.io/#jogcaetano13/communication_android)
+
 ## Features
 
 - LiveData responses
@@ -29,7 +31,7 @@ Install the dependencies via ```build.gradle``` (app module).
 ```kotlin
 dependencies {
     ...
-    implementation("com.github.joel.libraries:communication:1.0.0")
+    implementation("com.github.jogcaetano13:communication_android:<latest_version>")
 }
 ```
 
@@ -63,6 +65,8 @@ val response: Flow<ResultState<Model>> = client.call {
 
 ##### Paging response
 
+You don't need to provide the page, it will be increased automatically when it needs.
+
 ```kotlin
 val response: Flow<ResultState<PagingData<Model>>> = call {
     path = PATH
@@ -84,10 +88,10 @@ val response: Flow<ResultState<PagingData<Model>>> = call {
 
 ##### Using the response flow
 
-*Don't need to launch a coroutine in another thread, the library does that internally.*
+*Don't need to launch a coroutine in another thread, the library does it internally.*
 
 ```kotlin
-viewModel.challenges().observe(this) {
+response.observe(this) {
     when(it) {
         is ResultState.Error -> {}
         is ResultState.Loading -> {}
@@ -99,7 +103,7 @@ viewModel.challenges().observe(this) {
 
 ```kotlin
 lifecycleScope.launch {
-    viewModel.getChallenges().collectLatest {
+    response.collectLatest {
         when(it) {
             ResultState.Empty -> {}
             is ResultState.Error -> {}
