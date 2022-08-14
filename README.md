@@ -89,7 +89,7 @@ val response: Flow<ResultState<PagingData<Model>>> = call {
 *Don't need to launch a coroutine in another thread, the library does it internally.*
 
 ```kotlin
-viewModel.challenges().observe(this) {
+response.observe(this) {
     when(it) {
         is ResultState.Error -> {}
         is ResultState.Loading -> {}
@@ -101,7 +101,7 @@ viewModel.challenges().observe(this) {
 
 ```kotlin
 lifecycleScope.launch {
-    viewModel.getChallenges().collectLatest {
+    response.collectLatest {
         when(it) {
             ResultState.Empty -> {}
             is ResultState.Error -> {}
