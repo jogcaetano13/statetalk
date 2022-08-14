@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val libVersion = "1.0.0"
+val libVersion = "1.0.2"
 
 android {
     compileSdk = Config.COMPILE_SDK
@@ -110,7 +110,6 @@ dependencies {
     api("androidx.room:room-paging:2.4.3")
 
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
-    api("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.2")
     testImplementation("org.json:json:20200518")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")

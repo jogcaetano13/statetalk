@@ -3,11 +3,10 @@ package com.joel.communication.client
 import com.joel.communication.builders.ClientBuilder
 import com.joel.communication.calls.Call
 import com.joel.communication.client.interceptors.CustomHeaderInterceptor
-import com.joel.communication.extensions.toHttpLogLevel
+import com.joel.communication.client.interceptors.LoggingInterceptor
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.request.RequestBuilder
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
@@ -58,8 +57,8 @@ class Client private constructor() {
     }
 
     private fun OkHttpClient.Builder.addDefaultInterceptor(): OkHttpClient.Builder {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = builder.logBuilder.logLevel.toHttpLogLevel()
+        val loggingInterceptor = LoggingInterceptor()
+        loggingInterceptor.level = builder.logBuilder.logLevel
         addInterceptor(loggingInterceptor)
         connectTimeout(builder.timeoutBuilder.connectionTimeout.millis, TimeUnit.MILLISECONDS)
         readTimeout(builder.timeoutBuilder.readTimeout.millis, TimeUnit.MILLISECONDS)
