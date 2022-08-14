@@ -86,7 +86,7 @@ val response: Flow<ResultState<PagingData<Model>>> = call {
 
 ##### Using the response flow
 
-*Don't need to launch a coroutine in another thread, the library does that internally.*
+*Don't need to launch a coroutine in another thread, the library does it internally.*
 
 ```kotlin
 viewModel.challenges().observe(this) {
