@@ -3,7 +3,6 @@ package com.joel.communication.client
 import com.joel.communication.builders.ClientBuilder
 import com.joel.communication.calls.Call
 import com.joel.communication.client.interceptors.CustomHeaderInterceptor
-import com.joel.communication.client.interceptors.LoggingInterceptor
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.request.RequestBuilder
 import okhttp3.OkHttpClient
@@ -41,7 +40,7 @@ class Client private constructor() {
         val trustManagerFactory: TrustManagerFactory =
             TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
         trustManagerFactory.init(null as KeyStore?)
-        val trustManagers: Array<TrustManager> = trustManagerFactory.getTrustManagers()
+        val trustManagers: Array<TrustManager> = trustManagerFactory.trustManagers
         check(!(trustManagers.size != 1 || trustManagers[0] !is X509TrustManager)) {
             "Unexpected default trust managers:" + trustManagers.contentToString()
         }
@@ -57,9 +56,10 @@ class Client private constructor() {
     }
 
     private fun OkHttpClient.Builder.addDefaultInterceptor(): OkHttpClient.Builder {
-        val loggingInterceptor = LoggingInterceptor()
-        loggingInterceptor.level = builder.logBuilder.logLevel
-        addInterceptor(loggingInterceptor)
+        builder.interceptors.forEach {
+            addInterceptor(it)
+        }
+
         connectTimeout(builder.timeoutBuilder.connectionTimeout.millis, TimeUnit.MILLISECONDS)
         readTimeout(builder.timeoutBuilder.readTimeout.millis, TimeUnit.MILLISECONDS)
         writeTimeout(builder.timeoutBuilder.writeTimeout.millis, TimeUnit.MILLISECONDS)

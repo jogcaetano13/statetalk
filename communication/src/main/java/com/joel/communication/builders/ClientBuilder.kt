@@ -6,6 +6,7 @@ import com.joel.communication.annotations.CommunicationsMarker
 import com.joel.communication.client.Client
 import com.joel.communication.enums.HttpHeader
 import com.joel.communication.exceptions.CommunicationsException
+import okhttp3.Interceptor
 
 /**
  * The builder to construct a client http
@@ -24,12 +25,10 @@ class ClientBuilder private constructor() {
 
     internal val headers: Headers = mutableListOf()
     internal val timeoutBuilder = TimeoutBuilder()
-
-    internal val logBuilder = LogBuilder()
+    internal val interceptors = mutableListOf<Interceptor>()
 
     init {
         val defaultHeaders = listOf(
-            //Header(HttpHeader.ACCEPT_ENCODING, "compress;q=0.5, gzip;q=0.1"),
             Header(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded"),
             Header(HttpHeader.ACCEPT, "application/json")
         )
@@ -92,11 +91,10 @@ class ClientBuilder private constructor() {
     }
 
     /**
-     * Call this function to have access to the [LogBuilder] and handle request logs.
-     *
+     * Add a new Interceptor to http
      */
-    fun logs(builder: LogBuilder. () -> Unit) {
-        logBuilder.also(builder)
+    fun addInterceptor(interceptor: Interceptor) {
+        this.interceptors.add(interceptor)
     }
 
     internal fun build(): Client {
