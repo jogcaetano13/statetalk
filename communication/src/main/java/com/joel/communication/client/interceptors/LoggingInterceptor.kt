@@ -1,11 +1,11 @@
 package com.joel.communication.client.interceptors
 
+import android.util.Log
 import com.joel.communication.enums.LogLevel
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.internal.http.promisesBody
-import okhttp3.internal.platform.Platform
 import okio.Buffer
 import okio.GzipSource
 import java.io.EOFException
@@ -33,7 +33,7 @@ class LoggingInterceptor @JvmOverloads constructor(
             val DEFAULT: Logger = DefaultLogger()
             private class DefaultLogger : Logger {
                 override fun log(message: String) {
-                    Platform.get().log(message)
+                    Log.i("Communication HTTP", message)
                 }
             }
         }
