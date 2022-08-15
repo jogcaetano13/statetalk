@@ -5,11 +5,11 @@ import com.joel.communication.enums.LogLevel
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
-import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import okio.GzipSource
 import java.io.EOFException
 import java.io.IOException
+import java.net.HttpURLConnection
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -216,5 +216,41 @@ fun Buffer.isProbablyUtf8(): Boolean {
         return true
     } catch (_: EOFException) {
         return false // Truncated UTF-8 sequence.
+    }
+}
+
+fun Response.promisesBody(): Boolean {
+    // HEAD requests never yield a body regardless of the response headers.
+    if (request.method == "HEAD") {
+        return false
+    }
+
+    val responseCode = code
+    if ((responseCode < 100 || responseCode >= 200) &&
+        responseCode != HttpURLConnection.HTTP_NO_CONTENT &&
+        responseCode != HttpURLConnection.HTTP_NOT_MODIFIED
+    ) {
+        return true
+    }
+
+    // If the Content-Length or Transfer-Encoding headers disagree with the response code, the
+    // response is malformed. For best compatibility, we honor the headers.
+    if (headersContentLength() != -1L ||
+        "chunked".equals(header("Transfer-Encoding"), ignoreCase = true)) {
+        return true
+    }
+
+    return false
+}
+
+fun Response.headersContentLength(): Long {
+    return headers["Content-Length"]?.toLongOrDefault(-1L) ?: -1L
+}
+
+fun String.toLongOrDefault(defaultValue: Long): Long {
+    return try {
+        toLong()
+    } catch (_: NumberFormatException) {
+        defaultValue
     }
 }
