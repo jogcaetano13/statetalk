@@ -39,7 +39,7 @@ internal class NetworkPagingSource<T : PagingModel>(
                 }
                 is AsyncState.Error -> {
                     onError(resultState.error)
-                    LoadResult.Error(Throwable(resultState.error.error))
+                    LoadResult.Error(Throwable(resultState.error.errorBody))
                 }
                 is AsyncState.Success -> {
                     val envelopeList = resultState.data

@@ -26,6 +26,7 @@ class Client private constructor() {
 
     internal val client = createClient()
 
+    @PublishedApi
     internal fun call(request: CommunicationRequest) = client.newCall(request.request)
 
     /**

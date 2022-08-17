@@ -1,7 +1,6 @@
 package com.joel.communication.extensions
 
 import com.joel.communication.enums.ErrorResponseType
-import com.joel.communication.exceptions.CommunicationsException
 import com.joel.communication.models.ErrorResponse
 import okhttp3.Response
 import org.json.JSONException
@@ -17,19 +16,13 @@ val Throwable.apiError
     }
 
 fun Response.getApiError(): ErrorResponse {
-    val jsonObject = body?.string()?.toJsonObject()
+    val errorString = body?.string()
 
-    return if (jsonObject != null) {
-        val code = jsonObject.getIntOrNull("code") ?: 500
-        val error = jsonObject.getStringOrNull("error")
-
-        if (error == null)
-            CommunicationsException("Could not parse the JSONObject. Please check the error response on description. $jsonObject").printStackTrace()
-
+    return if (errorString != null) {
         if (code in 500..599)
-            return ErrorResponse(code, error, type = ErrorResponseType.SERVICE_UNAVAILABLE)
+            return ErrorResponse(code, errorString, type = ErrorResponseType.SERVICE_UNAVAILABLE)
 
-        ErrorResponse(code, error, ErrorResponseType.HTTP)
+        ErrorResponse(code, errorString, ErrorResponseType.HTTP)
 
     } else {
         getGenericError()

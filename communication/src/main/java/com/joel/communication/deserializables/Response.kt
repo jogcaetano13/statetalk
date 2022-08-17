@@ -11,7 +11,7 @@ import com.joel.communication.states.AsyncState
 suspend fun CommunicationRequest.response(): CommunicationResponse {
     return when(val call = apiCall()) {
         AsyncState.Empty -> throw IllegalStateException("Empty is not used!")
-        is AsyncState.Error -> CommunicationResponse(call.error.code, headers, call.error.error)
+        is AsyncState.Error -> CommunicationResponse(call.error.code, headers, call.error.errorBody)
         is AsyncState.Success -> CommunicationResponse(call.data.code, headers, call.data.body)
     }
 }

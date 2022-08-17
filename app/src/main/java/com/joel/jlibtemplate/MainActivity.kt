@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.joel.communication.extensions.toModel
 import com.joel.communication.states.ResultState
 import com.joel.jlibtemplate.adapters.ChallengeAdapter
 import com.joel.jlibtemplate.databinding.ActivityMainBinding
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity() {
                     ResultState.Empty -> {}
                     is ResultState.Error -> {
                         binding.loadingPb.isVisible = false
+                        val error = it.error.toModel<ErrorModel>()
+                        print(error)
                     }
                     ResultState.Loading -> binding.loadingPb.isVisible = true
                     is ResultState.Success -> {

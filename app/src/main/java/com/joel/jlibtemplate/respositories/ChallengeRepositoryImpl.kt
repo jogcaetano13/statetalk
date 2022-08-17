@@ -17,7 +17,7 @@ class ChallengeRepositoryImpl(
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getChallengesPaginated(scope: CoroutineScope): Flow<ResultState<PagingData<Challenge>>> = client.call {
-        path = "api/v1/users/siebenschlaefer/code-challenges/completed"
+        path = "api/v1/users/siebenschlaefer/code-challenges/complete"
 
     }.responsePaginated {
         cacheScope = scope
