@@ -2,14 +2,15 @@
 
 package com.joel.communication.deserializables
 
+import com.joel.communication.enums.ErrorResponseType
 import com.joel.communication.exceptions.CommunicationsException
 import com.joel.communication.extensions.*
+import com.joel.communication.models.ErrorResponse
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
 import com.joel.communication.states.ResultState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.*
 
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.*
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified T : Any> CommunicationRequest.responseFlow(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ) = flowOrCatch<T> {
@@ -65,7 +65,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
                 trySend(ResultState.Success(result))
 
             } else {
-                trySend(ResultState.Empty)
+                trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
             }
         }
 
@@ -90,7 +90,6 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit = {}
 ) = flowOrCatch<T> {
@@ -130,7 +129,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
                 trySend(ResultState.Success(result))
 
             } else {
-                trySend(ResultState.Empty)
+                trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
             }
         }
 
@@ -155,7 +154,6 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
 ) = flowOrCatch<List<T>> {
@@ -194,7 +192,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                 trySend(ResultState.Success(result!!))
 
             } else {
-                trySend(ResultState.Empty)
+                trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))
             }
         }
 
@@ -212,7 +210,6 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @PublishedApi
 internal fun <T : Any> flowOrCatch(block: suspend ProducerScope<ResultState<T>>.() -> Unit) = channelFlow {
     block(this)
