@@ -10,9 +10,11 @@ import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
 import com.joel.communication.states.ResultState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.first
 
 /**
  * @author joelcaetano
@@ -213,8 +215,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 @PublishedApi
 internal fun <T : Any> flowOrCatch(block: suspend ProducerScope<ResultState<T>>.() -> Unit) = channelFlow {
     block(this)
-}.flowOn(Dispatchers.IO)
-    .catch {
+}.catch {
     it.printStackTrace()
     emit(ResultState.Error(it.apiError))
 }
