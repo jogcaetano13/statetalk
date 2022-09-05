@@ -2,8 +2,13 @@
 
 package com.joel.communication.deserializables
 
-import androidx.paging.*
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.joel.communication.builders.PagingBuilder
+import com.joel.communication.dispatchers.CommunicationDispatcher
+import com.joel.communication.dispatchers.CommunicationDispatcherImpl
 import com.joel.communication.exceptions.CommunicationsException
 import com.joel.communication.extensions.updateUrl
 import com.joel.communication.models.PagingModel
@@ -11,12 +16,12 @@ import com.joel.communication.paging.NetworkPagingSource
 import com.joel.communication.paging.RemoteAndLocalPagingSource
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.states.ResultState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalPagingApi
 inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline builder: PagingBuilder<T>. () -> Unit = {}
 ) = channelFlow {
     val pagingBuilder = PagingBuilder<T>().also(builder)
@@ -38,7 +43,7 @@ inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
                     { trySend(ResultState.Loading) },
                     {
                         updateUrlPage(pagingBuilder.pageQueryName, it)
-                        this@responsePaginated.responseStateAsync()
+                        this@responsePaginated.responseStateAsync(dispatcher)
                     }
                 )
             }
@@ -53,7 +58,7 @@ inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
                 { trySend(ResultState.Loading) },
                 {
                     updateUrlPage(pagingBuilder.pageQueryName, it)
-                    this@responsePaginated.responseStateAsync()
+                    this@responsePaginated.responseStateAsync(dispatcher)
                 }
             ),
             pagingSourceFactory = pagingBuilder.itemsDataSource!!

@@ -1,11 +1,15 @@
 package com.joel.communication.deserializables
 
+import com.joel.communication.dispatchers.CommunicationDispatcher
+import com.joel.communication.dispatchers.CommunicationDispatcherImpl
+import com.joel.communication.enums.ErrorResponseType
 import com.joel.communication.envelope.EnvelopeList
 import com.joel.communication.extensions.*
 import com.joel.communication.models.ErrorResponse
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
+import kotlinx.coroutines.withContext
 
 /**
  * Deserialize the request into a [AsyncState].
@@ -18,13 +22,14 @@ import com.joel.communication.states.AsyncState
  * @return [AsyncState] with success (with data as [T]) or error (with error as [ErrorResponse]).
  */
 suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ): AsyncState<T> {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     builder.preCall?.invoke()
 
-    val call = apiCall()
+    val call = apiCall(dispatcher)
 
     response.post?.invoke()
 
@@ -34,11 +39,12 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
         is AsyncState.Success -> {
             val result = call.data.body?.toModel<T>(builder.dateFormat)
 
-            result?.let {
-                response.onSuccess?.invoke(it)
-                AsyncState.Success(it)
-            } ?: AsyncState.Empty
-
+            withContext(dispatcher.main()) {
+                result?.let {
+                    response.onSuccess?.invoke(it)
+                    AsyncState.Success(it)
+                } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
+            }
         }
     }
 }
@@ -55,13 +61,14 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
  * @return [AsyncState] with success (with data as [List] of type [T]) or error (with error as [ErrorResponse]).
  */
 suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
 ): AsyncState<List<T>> {
     val response = ResponseBuilder<List<T>>().also(responseBuilder)
 
     builder.preCall?.invoke()
 
-    val call = apiCall()
+    val call = apiCall(dispatcher)
 
     response.post?.invoke()
 
@@ -71,12 +78,12 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
         is AsyncState.Success -> {
             val result = call.data.body?.toList<T>(builder.dateFormat)
 
-            result?.let {
-                response.onSuccess?.invoke(it)
-
-                AsyncState.Success(it)
-
-            } ?: AsyncState.Empty
+            withContext(dispatcher.main()) {
+                result?.let {
+                    response.onSuccess?.invoke(it)
+                    AsyncState.Success(it)
+                } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
+            }
         }
     }
 }
@@ -93,13 +100,14 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
  * @return [AsyncState] with success (with data as [T]) or error (with error as [ErrorResponse]).
  */
 suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ): AsyncState<T> {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     builder.preCall?.invoke()
 
-    val call = apiCall()
+    val call = apiCall(dispatcher)
 
     response.post?.invoke()
 
@@ -109,17 +117,21 @@ suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
         is AsyncState.Success -> {
             val result = call.data.body?.toModelWrapped<T>(builder.dateFormat)
 
-            result?.let {
-                response.post?.invoke()
-                AsyncState.Success(it)
-            } ?: AsyncState.Empty
+            withContext(dispatcher.main()) {
+                result?.let {
+                    response.post?.invoke()
+                    AsyncState.Success(it)
+                } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
+            }
         }
     }
 }
 
 @PublishedApi
-internal suspend inline fun <reified T : Any> CommunicationRequest.responseStateAsync(): AsyncState<EnvelopeList<T>> {
-    return when(val call = apiCall()) {
+internal suspend inline fun <reified T : Any> CommunicationRequest.responseStateAsync(
+    dispatcher: CommunicationDispatcher
+): AsyncState<EnvelopeList<T>> {
+    return when(val call = apiCall(dispatcher)) {
         AsyncState.Empty -> throw IllegalStateException("Empty not used!")
         is AsyncState.Error -> AsyncState.Error(call.error)
         is AsyncState.Success -> {

@@ -4,6 +4,8 @@ package com.joel.communication.deserializables
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.joel.communication.dispatchers.CommunicationDispatcher
+import com.joel.communication.dispatchers.CommunicationDispatcherImpl
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.ResultState
@@ -16,9 +18,10 @@ import com.joel.communication.states.ResultState
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseLiveData(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ) = liveData {
-    responseFlow(responseBuilder).collect {
+    responseFlow(dispatcher, responseBuilder).collect {
         emit(it)
     }
 }
@@ -31,9 +34,10 @@ inline fun <reified T : Any> CommunicationRequest.responseLiveData(
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseWrappedLiveData(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ) = liveData {
-    responseWrappedFlow(responseBuilder).collect {
+    responseWrappedFlow(dispatcher, responseBuilder).collect {
         emit(it)
     }
 }
@@ -46,9 +50,10 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedLiveData(
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseListLiveData(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
 ) = liveData {
-    responseListFlow(responseBuilder).collect {
+    responseListFlow(dispatcher, responseBuilder).collect {
         emit(it)
     }
 }

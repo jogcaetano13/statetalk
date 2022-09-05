@@ -2,6 +2,8 @@
 
 package com.joel.communication.deserializables
 
+import com.joel.communication.dispatchers.CommunicationDispatcher
+import com.joel.communication.dispatchers.CommunicationDispatcherImpl
 import com.joel.communication.enums.ErrorResponseType
 import com.joel.communication.exceptions.CommunicationsException
 import com.joel.communication.extensions.*
@@ -11,10 +13,8 @@ import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
 import com.joel.communication.states.ResultState
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 
 /**
  * @author joelcaetano
@@ -29,8 +29,9 @@ import kotlinx.coroutines.flow.first
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseFlow(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
-) = flowOrCatch<T> {
+) = flowOrCatch((dispatcher)) {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
@@ -39,21 +40,27 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
         throw CommunicationsException("You must only call 'call()' or 'observe()', not both of them!")
 
-    val localCall = response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
+    val localCall = withContext(dispatcher.io()) {
+        response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
+    }
 
     localCall?.let {
-        trySend(ResultState.Success(it))
+        withContext(dispatcher.main()) {
+            trySend(ResultState.Success(it))
+        }
     }
 
     if (localCall == null)
-        trySend(ResultState.Loading)
+        withContext(dispatcher.main()) {
+            trySend(ResultState.Loading)
+        }
 
     if (response.offlineBuilder?.onlyLocalCall == true)
         return@flowOrCatch
 
     builder.preCall?.invoke()
 
-    val call = apiCall()
+    val call = apiCall(dispatcher)
 
     response.post?.invoke()
 
@@ -61,27 +68,33 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
         is AsyncState.Success -> {
             val result = call.data.body?.toModel<T>(builder.dateFormat)
 
-            if (result != null) {
-                response.onSuccess?.invoke(result)
+            withContext(dispatcher.main()) {
+                if (result != null) {
+                    response.onSuccess?.invoke(result)
 
-                trySend(ResultState.Success(result))
+                    trySend(ResultState.Success(result))
 
-            } else {
-                trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
+                } else {
+                    trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
+                }
             }
         }
 
-        is AsyncState.Error -> trySend(ResultState.Error(call.error))
+        is AsyncState.Error -> withContext(dispatcher.main()) { trySend(ResultState.Error(call.error)) }
         AsyncState.Empty -> {}
     }
 
     response.offlineBuilder?.call?.let {
         it()?.let {
-            ResultState.Success(it)
+            withContext(dispatcher.main()) {
+                ResultState.Success(it)
+            }
         }
     } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
         if (it != null)
-            trySend(ResultState.Success(it))
+            withContext(dispatcher.main()) {
+                trySend(ResultState.Success(it))
+            }
     }
 }
 
@@ -93,8 +106,9 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit = {}
-) = flowOrCatch<T> {
+) = flowOrCatch(dispatcher) {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
@@ -103,21 +117,27 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
         throw CommunicationsException("You must only call 'call()' or 'observe()', not both of them!")
 
-    val localCall = response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
+    val localCall = withContext(dispatcher.io()) {
+        response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
+    }
 
     localCall?.let {
-        trySend(ResultState.Success(it))
+        withContext(dispatcher.main()) {
+            trySend(ResultState.Success(it))
+        }
     }
 
     if (localCall == null)
-        trySend(ResultState.Loading)
+        withContext(dispatcher.main()) {
+            trySend(ResultState.Loading)
+        }
 
     if (response.offlineBuilder?.onlyLocalCall == true)
         return@flowOrCatch
 
     builder.preCall?.invoke()
 
-    val call = apiCall()
+    val call = apiCall(dispatcher)
 
     response.post?.invoke()
 
@@ -125,27 +145,33 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
         is AsyncState.Success -> {
             val result = call.data.body?.toModelWrapped<T>(builder.dateFormat)
 
-            if (result != null) {
-                response.onSuccess?.invoke(result)
+            withContext(dispatcher.main()) {
+                if (result != null) {
+                    response.onSuccess?.invoke(result)
 
-                trySend(ResultState.Success(result))
+                    trySend(ResultState.Success(result))
 
-            } else {
-                trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
+                } else {
+                    trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
+                }
             }
         }
 
-        is AsyncState.Error -> trySend(ResultState.Error(call.error))
+        is AsyncState.Error -> withContext(dispatcher.main()) { trySend(ResultState.Error(call.error)) }
         AsyncState.Empty -> {}
     }
 
     response.offlineBuilder?.call?.let {
         it()?.let {
-            ResultState.Success(it)
+            withContext(dispatcher.main()) {
+                ResultState.Success(it)
+            }
         }
     } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
         if (it != null)
-            trySend(ResultState.Success(it))
+            withContext(dispatcher.main()) {
+                trySend(ResultState.Success(it))
+            }
     }
 }
 
@@ -157,8 +183,9 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseListFlow(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
-) = flowOrCatch<List<T>> {
+) = flowOrCatch(dispatcher) {
     val response = ResponseBuilder<List<T>>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
@@ -167,20 +194,26 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
         throw CommunicationsException("You must only call 'call()' or 'observe()', not both of them!")
 
-    val localCall = response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
+    val localCall = withContext(dispatcher.io()) {
+        response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
+    }
 
     if (localCall.isNullOrEmpty().not())
-        trySend(ResultState.Success(localCall!!))
+        withContext(dispatcher.main()) {
+            trySend(ResultState.Success(localCall!!))
+        }
 
     if (localCall.isNullOrEmpty())
-        trySend(ResultState.Loading)
+        withContext(dispatcher.main()) {
+            trySend(ResultState.Loading)
+        }
 
     if (response.offlineBuilder?.onlyLocalCall == true)
         return@flowOrCatch
 
     builder.preCall?.invoke()
 
-    val call = apiCall()
+    val call = apiCall(dispatcher)
 
     response.post?.invoke()
 
@@ -188,34 +221,43 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
         is AsyncState.Success -> {
             val result = call.data.body?.toList<T>(builder.dateFormat)
 
-            if (result.isNullOrEmpty().not()) {
-                response.onSuccess?.invoke(result!!)
+            withContext(dispatcher.main()) {
+                if (result.isNullOrEmpty().not()) {
+                    response.onSuccess?.invoke(result!!)
 
-                trySend(ResultState.Success(result!!))
+                    trySend(ResultState.Success(result!!))
 
-            } else {
-                trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))
+                } else {
+                    trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))
+                }
             }
         }
 
-        is AsyncState.Error -> trySend(ResultState.Error(call.error))
+        is AsyncState.Error -> withContext(dispatcher.main()) { trySend(ResultState.Error(call.error)) }
         AsyncState.Empty -> {}
     }
 
     response.offlineBuilder?.call?.let {
         it()?.let {
-            ResultState.Success(it)
+            withContext(dispatcher.main()) {
+                ResultState.Success(it)
+            }
         }
     } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
         if (it != null)
-            trySend(ResultState.Success(it))
+            withContext(dispatcher.main()) {
+                trySend(ResultState.Success(it))
+            }
     }
 }
 
 @PublishedApi
-internal fun <T : Any> flowOrCatch(block: suspend ProducerScope<ResultState<T>>.() -> Unit) = channelFlow {
+internal fun <T : Any> flowOrCatch(
+    communicationDispatcher: CommunicationDispatcher,
+    block: suspend ProducerScope<ResultState<T>>.() -> Unit
+) = channelFlow {
     block(this)
-}.catch {
+}.flowOn(communicationDispatcher.default()).catch {
     it.printStackTrace()
     emit(ResultState.Error(it.apiError))
 }

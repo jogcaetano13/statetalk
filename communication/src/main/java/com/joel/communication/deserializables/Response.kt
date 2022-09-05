@@ -1,5 +1,7 @@
 package com.joel.communication.deserializables
 
+import com.joel.communication.dispatchers.CommunicationDispatcher
+import com.joel.communication.dispatchers.CommunicationDispatcherImpl
 import com.joel.communication.extensions.apiCall
 import com.joel.communication.extensions.toList
 import com.joel.communication.extensions.toModel
@@ -8,8 +10,10 @@ import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.CommunicationResponse
 import com.joel.communication.states.AsyncState
 
-suspend fun CommunicationRequest.response(): CommunicationResponse {
-    return when(val call = apiCall()) {
+suspend fun CommunicationRequest.response(
+    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl
+): CommunicationResponse {
+    return when(val call = apiCall(dispatcher)) {
         AsyncState.Empty -> throw IllegalStateException("Empty is not used!")
         is AsyncState.Error -> CommunicationResponse(call.error.code, headers, call.error.errorBody)
         is AsyncState.Success -> CommunicationResponse(call.data.code, headers, call.data.body)
