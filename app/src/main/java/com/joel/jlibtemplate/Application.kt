@@ -1,10 +1,7 @@
 package com.joel.jlibtemplate
 
 import android.app.Application
-import com.joel.jlibtemplate.di.clientModule
-import com.joel.jlibtemplate.di.databaseModule
-import com.joel.jlibtemplate.di.repositoriesModule
-import com.joel.jlibtemplate.di.viewModelModule
+import com.joel.jlibtemplate.di.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -27,6 +24,7 @@ class Application : Application() {
                 },
                 databaseModule(),
                 repositoriesModule(),
+                communicationDispatcher(),
                 viewModelModule()
             )
         }

@@ -60,4 +60,13 @@ dependencies {
     kapt("android.arch.persistence.room:compiler:1.1.1")
 
     implementation("com.squareup.picasso:picasso:2.71828")
+
+    // Unit tests
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("app.cash.turbine:turbine:0.8.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation("androidx.test:runner:1.4.0")
+    testImplementation("androidx.arch.core:core-testing:2.1.0")
 }

@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity() {
                     ResultState.Loading -> binding.loadingPb.isVisible = true
                     is ResultState.Success -> {
                         binding.loadingPb.isVisible = false
-                        adapter.submitData(it.data)
+                        val data = it.data
+                        println(data)
                     }
                 }
             }
