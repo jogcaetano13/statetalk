@@ -30,7 +30,7 @@ Install the dependencies via ```build.gradle``` (app module).
 
 ```kotlin
 dependencies {
-    ...
+    //...
     implementation("com.github.jogcaetano13:communication_android:<latest_version>")
 }
 ```
@@ -112,6 +112,19 @@ lifecycleScope.launch {
         }
     }
 }
+```
+
+## Testing
+
+For testing propose, you must inject ```CommunicationDispatcher``` into the response to override the dispatchers.
+
+```kotlin
+val response: Flow<ResultState<Model>> = client.call {
+    path = PATH
+
+    parameter(key, value)
+
+}.responseFlow(communicationDispatcher)
 ```
 
 ## License
