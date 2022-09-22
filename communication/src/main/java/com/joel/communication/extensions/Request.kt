@@ -1,7 +1,7 @@
 package com.joel.communication.extensions
 
 import com.joel.communication.alias.Parameters
-import com.joel.communication.client.Client
+import com.joel.communication.client.ClientImpl
 import com.joel.communication.enums.HttpMethod
 import com.joel.communication.request.RequestBuilder
 import okhttp3.Request
@@ -30,7 +30,7 @@ internal fun createUrl(path: String): URL {
     val url = try {
         URL(path)
     } catch (e: MalformedURLException) {
-        URL(Client.instance.baseUrl + if (path.startsWith('/') or path.isEmpty()) path else "/$path")
+        URL(ClientImpl.instance.baseUrl + if (path.startsWith('/') or path.isEmpty()) path else "/$path")
     }
 
     val uri = try {

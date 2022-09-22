@@ -4,6 +4,7 @@ import com.joel.communication.alias.Header
 import com.joel.communication.alias.Headers
 import com.joel.communication.annotations.CommunicationsMarker
 import com.joel.communication.client.Client
+import com.joel.communication.client.ClientImpl
 import com.joel.communication.enums.HttpHeader
 import com.joel.communication.exceptions.CommunicationsException
 import okhttp3.Interceptor
@@ -98,7 +99,7 @@ class ClientBuilder private constructor() {
     }
 
     internal fun build(): Client {
-        val client = Client.instance
+        val client = ClientImpl.instance
         client.baseUrl = baseUrl
         client.builder = this
         return client
