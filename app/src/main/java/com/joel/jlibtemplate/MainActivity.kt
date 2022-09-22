@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joel.communication.extensions.toModel
+import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.states.ResultState
 import com.joel.jlibtemplate.adapters.ChallengeAdapter
 import com.joel.jlibtemplate.databinding.ActivityMainBinding
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val adapter = ChallengeAdapter()
+
+        CommunicationRequest.testRequest()
 
         binding.itemsRv.also {
             it.layoutManager = LinearLayoutManager(this)

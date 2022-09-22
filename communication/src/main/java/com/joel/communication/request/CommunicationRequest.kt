@@ -1,5 +1,6 @@
 package com.joel.communication.request
 
+import androidx.annotation.VisibleForTesting
 import com.joel.communication.alias.Headers
 import com.joel.communication.enums.HttpHeader
 import com.joel.communication.enums.HttpMethod
@@ -35,4 +36,13 @@ data class CommunicationRequest internal constructor(
             val first = HttpHeader.find(requestHeader.first) ?: HttpHeader(requestHeader.first)
             Pair(first, requestHeader.second)
         }.toMutableList()
+
+    companion object {
+
+        @VisibleForTesting
+        fun testRequest() = CommunicationRequest(
+            Request.Builder(),
+            RequestBuilder()
+        )
+    }
 }
