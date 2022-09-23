@@ -3,6 +3,7 @@ package com.joel.communication.client
 import com.joel.communication.builders.ClientBuilder
 import com.joel.communication.calls.Call
 import com.joel.communication.client.interceptors.CustomHeaderInterceptor
+import com.joel.communication.client.interceptors.LoggingInterceptor
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.request.RequestBuilder
 import okhttp3.OkHttpClient
@@ -57,6 +58,12 @@ internal class ClientImpl private constructor() : Client {
     }
 
     private fun OkHttpClient.Builder.addDefaultInterceptor(): OkHttpClient.Builder {
+        val loggingInterceptor = LoggingInterceptor().also {
+            it.level = builder.logLevel
+        }
+
+        addInterceptor(loggingInterceptor)
+
         builder.interceptors.forEach {
             addInterceptor(it)
         }

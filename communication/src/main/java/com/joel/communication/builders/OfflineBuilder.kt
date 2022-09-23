@@ -4,7 +4,7 @@ import com.joel.communication.annotations.CommunicationsMarker
 import kotlinx.coroutines.flow.Flow
 
 @CommunicationsMarker
-class OfflineBuilder<T> {
+class OfflineBuilder<T> internal constructor() {
 
     /**
      * Whether or not the request should only call a local data source.

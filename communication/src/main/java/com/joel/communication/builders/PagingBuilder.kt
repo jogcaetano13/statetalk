@@ -10,7 +10,7 @@ import com.joel.communication.valueclasses.Duration
 import kotlinx.coroutines.CoroutineScope
 
 @CommunicationsMarker
-class PagingBuilder<T : PagingModel> {
+class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
 
     /**
      * The page size to load at once from [PagingSource].

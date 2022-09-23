@@ -39,8 +39,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
-
     // Koin
     implementation("io.insert-koin:koin-core:3.1.6")
     implementation("io.insert-koin:koin-android:3.1.6")

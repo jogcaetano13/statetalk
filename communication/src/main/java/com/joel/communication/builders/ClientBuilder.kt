@@ -6,6 +6,7 @@ import com.joel.communication.annotations.CommunicationsMarker
 import com.joel.communication.client.Client
 import com.joel.communication.client.ClientImpl
 import com.joel.communication.enums.HttpHeader
+import com.joel.communication.enums.LogLevel
 import com.joel.communication.exceptions.CommunicationsException
 import okhttp3.Interceptor
 
@@ -44,6 +45,8 @@ class ClientBuilder private constructor() {
      * Should not be empty.
      */
     var baseUrl: String = ""
+
+    var logLevel: LogLevel = LogLevel.None
 
     /**
      * Authorization header to to send in the http request for all calls.

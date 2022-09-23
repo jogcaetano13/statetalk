@@ -4,7 +4,7 @@ import com.joel.communication.annotations.CommunicationsMarker
 import com.joel.communication.valueclasses.Duration
 
 @CommunicationsMarker
-class TimeoutBuilder {
+class TimeoutBuilder internal constructor() {
 
     /**
      * Sets the default connect timeout for new connections. A value of 0 means no timeout.
