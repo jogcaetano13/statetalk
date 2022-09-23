@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joel.communication.extensions.toModel
-import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.states.ResultState
 import com.joel.jlibtemplate.adapters.ChallengeAdapter
 import com.joel.jlibtemplate.databinding.ActivityMainBinding
@@ -26,15 +25,13 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = ChallengeAdapter()
 
-        CommunicationRequest.testRequest()
-
         binding.itemsRv.also {
             it.layoutManager = LinearLayoutManager(this)
             it.adapter = adapter
         }
 
         lifecycleScope.launch {
-            viewModel.getChallenges().collectLatest {
+            viewModel.getChallengesPaginated().collectLatest {
                 when(it) {
                     ResultState.Empty -> {}
                     is ResultState.Error -> {
@@ -46,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                     is ResultState.Success -> {
                         binding.loadingPb.isVisible = false
                         val data = it.data
-                        println(data)
+                        adapter.submitData(data)
                     }
                 }
             }

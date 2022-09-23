@@ -73,10 +73,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
                 if (result != null) {
                     response.onNetworkSuccess?.invoke(result)
 
-                    if (localCall == null)
-                        trySend(ResultState.Success(result, DataFrom.Network))
-                    else
-                        return@withContext
+                    trySend(ResultState.Success(result, DataFrom.Network))
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
@@ -153,10 +150,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
                 if (result != null) {
                     response.onNetworkSuccess?.invoke(result)
 
-                    if (localCall == null)
-                        trySend(ResultState.Success(result, DataFrom.Network))
-                    else
-                        return@withContext
+                    trySend(ResultState.Success(result, DataFrom.Network))
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
@@ -232,10 +226,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                 if (result.isNullOrEmpty().not()) {
                     response.onNetworkSuccess?.invoke(result!!)
 
-                    if (localCall.isNullOrEmpty())
-                        trySend(ResultState.Success(result!!, DataFrom.Local))
-                    else
-                        return@withContext
+                    trySend(ResultState.Success(result!!, DataFrom.Network))
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))

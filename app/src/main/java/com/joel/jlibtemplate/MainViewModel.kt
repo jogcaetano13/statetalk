@@ -11,6 +11,4 @@ class MainViewModel(
 ) : ViewModel() {
 
     fun getChallengesPaginated() = repository.getChallengesPaginated(viewModelScope)
-
-    fun getChallenges() = repository.getChallenges(dispatcher)
 }
