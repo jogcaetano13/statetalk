@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val libVersion = "1.0.11"
+val libVersion = "1.0.12"
 
 android {
     compileSdk = Config.COMPILE_SDK
@@ -92,6 +92,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")

@@ -12,7 +12,7 @@ val Throwable.apiError
     get() = when(this) {
         is SocketTimeoutException -> ErrorResponse(408, "Timeout", ErrorResponseType.TIMEOUT)
         is UnknownHostException -> ErrorResponse(500, "No Internet", ErrorResponseType.INTERNET_CONNECTION)
-        else -> ErrorResponse(500, "Unknown", ErrorResponseType.UNKNOWN)
+        else -> ErrorResponse(500, message, ErrorResponseType.UNKNOWN)
     }
 
 fun Response.getApiError(): ErrorResponse {

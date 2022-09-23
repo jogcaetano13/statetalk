@@ -13,7 +13,7 @@ class ResponseBuilder<T> @PublishedApi internal constructor(){
     internal var post: (suspend () -> Unit)? = null
 
     @PublishedApi
-    internal var onSuccess: (suspend (model: T) -> Unit)? = null
+    internal var onNetworkSuccess: (suspend (model: T) -> Unit)? = null
 
     /**
      * Call this function to access the [OfflineBuilder] and handle local calls.
@@ -28,8 +28,8 @@ class ResponseBuilder<T> @PublishedApi internal constructor(){
      *
      * @param onSuccess The lambda with a success data response of type [T] and it is suspended.
      */
-    fun onSuccess(onSuccess: suspend (data: T) -> Unit) {
-        this.onSuccess = onSuccess
+    fun onNetworkSuccess(onSuccess: suspend (data: T) -> Unit) {
+        this.onNetworkSuccess = onSuccess
     }
 
     /**

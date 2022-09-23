@@ -11,6 +11,7 @@ import com.joel.communication.models.ErrorResponse
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
+import com.joel.communication.states.DataFrom
 import com.joel.communication.states.ResultState
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.*
@@ -31,7 +32,7 @@ import kotlinx.coroutines.withContext
 inline fun <reified T : Any> CommunicationRequest.responseFlow(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
-) = flowOrCatch((dispatcher)) {
+) = flowOrCatch(dispatcher) {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
@@ -46,7 +47,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 
     localCall?.let {
         withContext(dispatcher.main()) {
-            trySend(ResultState.Success(it))
+            trySend(ResultState.Success(it, DataFrom.Local))
         }
     }
 
@@ -70,9 +71,12 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 
             withContext(dispatcher.main()) {
                 if (result != null) {
-                    response.onSuccess?.invoke(result)
+                    response.onNetworkSuccess?.invoke(result)
 
-                    trySend(ResultState.Success(result))
+                    if (localCall == null)
+                        trySend(ResultState.Success(result, DataFrom.Network))
+                    else
+                        return@withContext
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
@@ -87,13 +91,13 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
     response.offlineBuilder?.call?.let {
         it()?.let {
             withContext(dispatcher.main()) {
-                ResultState.Success(it)
+                ResultState.Success(it, DataFrom.Local)
             }
         }
     } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
         if (it != null)
             withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it))
+                trySend(ResultState.Success(it, DataFrom.Local))
             }
     }
 }
@@ -123,7 +127,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 
     localCall?.let {
         withContext(dispatcher.main()) {
-            trySend(ResultState.Success(it))
+            trySend(ResultState.Success(it, DataFrom.Local))
         }
     }
 
@@ -147,9 +151,12 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 
             withContext(dispatcher.main()) {
                 if (result != null) {
-                    response.onSuccess?.invoke(result)
+                    response.onNetworkSuccess?.invoke(result)
 
-                    trySend(ResultState.Success(result))
+                    if (localCall == null)
+                        trySend(ResultState.Success(result, DataFrom.Network))
+                    else
+                        return@withContext
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
@@ -164,13 +171,13 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
     response.offlineBuilder?.call?.let {
         it()?.let {
             withContext(dispatcher.main()) {
-                ResultState.Success(it)
+                ResultState.Success(it, DataFrom.Local)
             }
         }
     } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
         if (it != null)
             withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it))
+                trySend(ResultState.Success(it, DataFrom.Local))
             }
     }
 }
@@ -200,7 +207,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 
     if (localCall.isNullOrEmpty().not())
         withContext(dispatcher.main()) {
-            trySend(ResultState.Success(localCall!!))
+            trySend(ResultState.Success(localCall!!, DataFrom.Local))
         }
 
     if (localCall.isNullOrEmpty())
@@ -223,9 +230,12 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 
             withContext(dispatcher.main()) {
                 if (result.isNullOrEmpty().not()) {
-                    response.onSuccess?.invoke(result!!)
+                    response.onNetworkSuccess?.invoke(result!!)
 
-                    trySend(ResultState.Success(result!!))
+                    if (localCall.isNullOrEmpty())
+                        trySend(ResultState.Success(result!!, DataFrom.Local))
+                    else
+                        return@withContext
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))
@@ -240,13 +250,13 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     response.offlineBuilder?.call?.let {
         it()?.let {
             withContext(dispatcher.main()) {
-                ResultState.Success(it)
+                ResultState.Success(it, DataFrom.Local)
             }
         }
     } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
         if (it != null)
             withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it))
+                trySend(ResultState.Success(it, DataFrom.Local))
             }
     }
 }

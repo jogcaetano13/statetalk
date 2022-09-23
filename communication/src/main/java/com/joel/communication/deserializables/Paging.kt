@@ -15,6 +15,7 @@ import com.joel.communication.models.PagingModel
 import com.joel.communication.paging.NetworkPagingSource
 import com.joel.communication.paging.RemoteAndLocalPagingSource
 import com.joel.communication.request.CommunicationRequest
+import com.joel.communication.states.DataFrom
 import com.joel.communication.states.ResultState
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -70,7 +71,7 @@ inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
     } ?: pager
 
     pagerResult.collectLatest {
-        trySend(ResultState.Success(it))
+        trySend(ResultState.Success(it, if (pagingBuilder.onlyApiCall) DataFrom.Network else DataFrom.Local))
     }
 }
 

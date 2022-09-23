@@ -21,7 +21,7 @@ class ChallengeRepositoryImpl(
         path = "api/v1/users/siebenschlaefer/code-challenges/completed"
 
     }.responseListFlow(dispatcher) {
-        onSuccess {
+        onNetworkSuccess {
             dao.replace(it)
         }
 

@@ -41,7 +41,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
 
             withContext(dispatcher.main()) {
                 result?.let {
-                    response.onSuccess?.invoke(it)
+                    response.onNetworkSuccess?.invoke(it)
                     AsyncState.Success(it)
                 } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
             }
@@ -80,7 +80,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
 
             withContext(dispatcher.main()) {
                 result?.let {
-                    response.onSuccess?.invoke(it)
+                    response.onNetworkSuccess?.invoke(it)
                     AsyncState.Success(it)
                 } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
             }
