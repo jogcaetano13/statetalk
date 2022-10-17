@@ -119,7 +119,7 @@ suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
 
             withContext(dispatcher.main()) {
                 result?.let {
-                    response.post?.invoke()
+                    response.onNetworkSuccess?.invoke(it)
                     AsyncState.Success(it)
                 } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
             }
