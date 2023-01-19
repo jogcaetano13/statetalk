@@ -35,7 +35,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 ) = flowOrCatch(dispatcher) {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
-    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
+    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
         throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
 
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
@@ -112,7 +112,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 ) = flowOrCatch(dispatcher) {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
-    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
+    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
         throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
 
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
@@ -189,7 +189,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 ) = flowOrCatch(dispatcher) {
     val response = ResponseBuilder<List<T>>().also(responseBuilder)
 
-    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null || response.offlineBuilder?.call == null))
+    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
         throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
 
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
