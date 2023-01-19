@@ -51,13 +51,13 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
         }
     }
 
+    if (response.offlineBuilder?.onlyLocalCall == true)
+        return@flowOrCatch
+
     if (localCall == null)
         withContext(dispatcher.main()) {
             trySend(ResultState.Loading)
         }
-
-    if (response.offlineBuilder?.onlyLocalCall == true)
-        return@flowOrCatch
 
     builder.preCall?.invoke()
 
@@ -128,13 +128,13 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
         }
     }
 
+    if (response.offlineBuilder?.onlyLocalCall == true)
+        return@flowOrCatch
+
     if (localCall == null)
         withContext(dispatcher.main()) {
             trySend(ResultState.Loading)
         }
-
-    if (response.offlineBuilder?.onlyLocalCall == true)
-        return@flowOrCatch
 
     builder.preCall?.invoke()
 
@@ -201,17 +201,22 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 
     localCall?.let {
         withContext(dispatcher.main()) {
-            trySend(ResultState.Success(it, DataFrom.Local))
+            trySend(
+                if (it.isEmpty())
+                    ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY))
+                else
+                    ResultState.Success(it, DataFrom.Local)
+            )
         }
     }
 
-    if (localCall == null)
+    if (response.offlineBuilder?.onlyLocalCall == true)
+        return@flowOrCatch
+
+    if (localCall.isNullOrEmpty())
         withContext(dispatcher.main()) {
             trySend(ResultState.Loading)
         }
-
-    if (response.offlineBuilder?.onlyLocalCall == true)
-        return@flowOrCatch
 
     builder.preCall?.invoke()
 
