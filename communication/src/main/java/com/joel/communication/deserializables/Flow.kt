@@ -199,12 +199,13 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
         response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
     }
 
-    if (localCall.isNullOrEmpty().not())
+    localCall?.let {
         withContext(dispatcher.main()) {
-            trySend(ResultState.Success(localCall!!, DataFrom.Local))
+            trySend(ResultState.Success(it, DataFrom.Local))
         }
+    }
 
-    if (localCall.isNullOrEmpty())
+    if (localCall == null)
         withContext(dispatcher.main()) {
             trySend(ResultState.Loading)
         }
