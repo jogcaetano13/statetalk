@@ -16,7 +16,7 @@ class Application : Application() {
             modules(
                 clientModule {
                     baseUrl = BASE_URL
-                    logLevel = LogLevel.Basic
+                    logLevel = LogLevel.Body
                 },
                 databaseModule(),
                 repositoriesModule(),

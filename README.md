@@ -43,7 +43,7 @@ Initiate the client in singleton class or dependency injection
 
 ```kotlin
 val client = communicationClient {
-    baseUrl = "BASE_URL"
+    baseUrl = BASE_URL
 }
 ```
 *You can add another customization, like header and parameters.*
@@ -62,6 +62,21 @@ val response: Flow<ResultState<Model>> = client.call {
 
 }.responseFlow()
 ```
+
+###### You can add more customization like change the method, replace local call on success response and observing that local data
+val response: Flow<ResultState<Model>> = client.call {
+    path = PATH
+    method = HttpMethod.POST
+
+}.responseFlow {
+    onNetworkSuccess {
+        /* Do anything with the response, like replace local database data */
+    }
+    
+    local {
+        observe { /* Keep track on local database changes */ }
+    }
+}
 
 ##### Paging response
 
