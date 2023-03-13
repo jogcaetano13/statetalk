@@ -64,6 +64,8 @@ val response: Flow<ResultState<Model>> = client.call {
 ```
 
 ###### You can add more customization like change the method, replace local call on success response and observing that local data
+
+```kotlin
 val response: Flow<ResultState<Model>> = client.call {
     path = PATH
     method = HttpMethod.POST
@@ -77,6 +79,7 @@ val response: Flow<ResultState<Model>> = client.call {
         observe { /* Keep track on local database changes */ }
     }
 }
+```
 
 ##### Paging response
 
