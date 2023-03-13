@@ -71,7 +71,7 @@ val response: Flow<ResultState<Model>> = client.call {
     method = HttpMethod.POST
 
 }.responseFlow {
-    onNetworkSuccess {
+    onNetworkSuccess { data ->
         /* Do anything with the response, like replace local database data */
     }
     
