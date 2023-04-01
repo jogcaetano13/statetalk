@@ -100,7 +100,7 @@ val response: Flow<ResultState<PagingData<Model>>> = call {
 
     // If you want to show loading only if it hasn't items, provide the first nullable item from database,
     // otherwise, loading will trigger every time the screen is opened.
-    firstItemDatabase { dao.getChallenge() }
+    firstItemDatabase { /* The first item of the database in flow */ }
 }
 ```
 
