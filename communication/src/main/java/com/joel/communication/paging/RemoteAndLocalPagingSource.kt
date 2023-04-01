@@ -60,42 +60,46 @@ internal class RemoteAndLocalPagingSource<T : PagingModel>(
         if (builder.lastUpdatedTimestamp == null)
             Log.d("Communication", "------------ Implement 'firstItemDatabase()' function to deal with loading ----------------")
 
-        return when(resultState) {
-            AsyncState.Empty -> {
-                onEmpty()
-                MediatorResult.Error(Throwable("Empty data"))
-            }
-            is AsyncState.Error -> {
-                onError(resultState.error)
-                MediatorResult.Error(Throwable(resultState.error.errorBody))
-            }
-            is AsyncState.Success -> {
-                val envelopeList = resultState.data
-
-                envelopeList.data.forEach {
-                    it.page = nextPage
+        return try {
+            when(resultState) {
+                AsyncState.Empty -> {
+                    onEmpty()
+                    MediatorResult.Error(Throwable("Empty data"))
                 }
+                is AsyncState.Error -> {
+                    onError(resultState.error)
+                    MediatorResult.Error(Throwable(resultState.error.errorBody))
+                }
+                is AsyncState.Success -> {
+                    val envelopeList = resultState.data
 
-                if (loadType == LoadType.REFRESH) {
                     envelopeList.data.forEach {
-                        it.lastUpdatedTimestamp = System.currentTimeMillis()
+                        it.page = nextPage
                     }
+
+                    if (loadType == LoadType.REFRESH) {
+                        envelopeList.data.forEach {
+                            it.lastUpdatedTimestamp = System.currentTimeMillis()
+                        }
+                    }
+
+                    if (loadType == LoadType.REFRESH && builder.deleteOnRefresh) {
+                        if (builder.deleteAll == null)
+                            throw CommunicationsException("You must implement 'deleteAll()' function if 'deleteOnRefresh' is true!")
+
+                        builder.deleteAll?.invoke()
+                    }
+
+                    if (builder.insertAll == null)
+                        throw CommunicationsException("You must implement 'insertAll()' function!")
+
+                    builder.insertAll?.invoke(envelopeList.data)
+
+                    MediatorResult.Success(envelopeList.data.size < builder.defaultPageSize)
                 }
-
-                if (loadType == LoadType.REFRESH && builder.deleteOnRefresh) {
-                    if (builder.deleteAll == null)
-                        throw CommunicationsException("You must implement 'deleteAll()' function if 'deleteOnRefresh' is true!")
-
-                    builder.deleteAll?.invoke()
-                }
-
-                if (builder.insertAll == null)
-                    throw CommunicationsException("You must implement 'insertAll()' function!")
-
-                builder.insertAll?.invoke(envelopeList.data)
-
-                MediatorResult.Success(envelopeList.data.size < builder.defaultPageSize)
             }
+        } catch (e: Exception) {
+            MediatorResult.Error(e)
         }
     }
 }
