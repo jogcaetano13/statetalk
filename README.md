@@ -86,7 +86,7 @@ val response: Flow<ResultState<Model>> = client.call {
 You don't need to provide the page, it will be increased automatically when it needs.
 
 ```kotlin
-val response: Flow<ResultState<PagingData<Model>>> = call {
+val response: Flow<PagingData<Model>> = call {
     path = PATH
 
     parameter(key, value)
@@ -103,6 +103,25 @@ val response: Flow<ResultState<PagingData<Model>>> = call {
     firstItemDatabase { /* The first item of the database in flow */ }
 }
 ```
+
+The response paginated doesn't return a state, so you need to handle the loading and errors in the ui, for example:
+
+```kotlin
+lifecycleScope.launch { 
+    adapter.loadStateFlow.collectLatest {
+        if (it.refresh is LoadState.Error) {
+            Toast.makeText(
+                this@MainActivity,
+                (it.refresh as LoadState.Error).error.message,
+                Toast.LENGTH_SHORT).show()
+        }
+
+        binding.loadingPb.isVisible = it.refresh is LoadState.Loading
+    }
+}
+```
+
+For the loading and error when load more, you need to create a LoadStateAdapter.
 
 ##### Using the response flow
 
