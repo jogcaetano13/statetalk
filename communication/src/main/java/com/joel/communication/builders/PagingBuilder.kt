@@ -7,7 +7,6 @@ import com.joel.communication.models.PagingModel
 import com.joel.communication.paging.NetworkPagingSource
 import com.joel.communication.paging.RemoteAndLocalPagingSource
 import com.joel.communication.valueclasses.Duration
-import kotlinx.coroutines.CoroutineScope
 
 @CommunicationsMarker
 class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
@@ -69,8 +68,6 @@ class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
     internal var deleteAll: ( suspend () -> Unit)? = null
     internal var insertAll: ( suspend (items: List<T>) -> Unit)? = null
 
-    var cacheScope: CoroutineScope? = null
-
     /**
      * Call this to delete all data from local data source.
      *
@@ -100,7 +97,7 @@ class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
 
     /**
      * Call this function to get the first item from local data source.
-     * <b>Warning:</b> this functions is necessary for first loading propose.
+     * <b>Warning:</b> this functions is necessary if you don't want to refresh content when open the app.
      */
     fun firstItemDatabase(itemDatabase: suspend () -> T?) {
         lastUpdatedTimestamp = { itemDatabase()?.lastUpdatedTimestamp }

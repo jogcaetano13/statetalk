@@ -1,13 +1,15 @@
 package com.joel.jlibtemplate
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joel.communication.extensions.toModel
-import com.joel.communication.states.ResultState
 import com.joel.jlibtemplate.adapters.ChallengeAdapter
+import com.joel.jlibtemplate.adapters.ChallengeLoadStateAdapter
 import com.joel.jlibtemplate.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,28 +26,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val adapter = ChallengeAdapter()
+        val adapterWithFooter = adapter.withLoadStateFooter(ChallengeLoadStateAdapter())
 
         binding.itemsRv.also {
             it.layoutManager = LinearLayoutManager(this)
-            it.adapter = adapter
+            it.adapter = adapterWithFooter
+            it.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        }
+
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest {
+                if (it.refresh is LoadState.Error) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        (it.refresh as LoadState.Error).error.message,
+                        Toast.LENGTH_SHORT).show()
+                }
+
+                binding.loadingPb.isVisible = it.refresh is LoadState.Loading
+            }
         }
 
         lifecycleScope.launch {
             viewModel.getChallengesPaginated().collectLatest {
-                when(it) {
-                    ResultState.Empty -> {}
-                    is ResultState.Error -> {
-                        binding.loadingPb.isVisible = false
-                        val error = it.error.toModel<ErrorModel>()
-                        print(error)
-                    }
-                    ResultState.Loading -> binding.loadingPb.isVisible = true
-                    is ResultState.Success -> {
-                        binding.loadingPb.isVisible = false
-                        val data = it.data
-                        adapter.submitData(data)
-                    }
-                }
+                adapter.submitData(it)
             }
         }
     }

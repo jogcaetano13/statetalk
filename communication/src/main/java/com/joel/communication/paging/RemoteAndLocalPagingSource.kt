@@ -1,6 +1,5 @@
 package com.joel.communication.paging
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -8,7 +7,6 @@ import androidx.paging.RemoteMediator
 import com.joel.communication.builders.PagingBuilder
 import com.joel.communication.envelope.EnvelopeList
 import com.joel.communication.exceptions.CommunicationsException
-import com.joel.communication.models.ErrorResponse
 import com.joel.communication.models.PagingModel
 import com.joel.communication.states.AsyncState
 
@@ -16,9 +14,6 @@ import com.joel.communication.states.AsyncState
 @PublishedApi
 internal class RemoteAndLocalPagingSource<T : PagingModel>(
     private val builder: PagingBuilder<T>,
-    private val onError: suspend (error: ErrorResponse) -> Unit,
-    private val onEmpty: suspend () -> Unit,
-    private val onLoading: suspend () -> Unit,
     private val doApiCall: suspend (page: Int) -> AsyncState<EnvelopeList<T>>
 ) : RemoteMediator<Int, T>() {
 
@@ -47,29 +42,15 @@ internal class RemoteAndLocalPagingSource<T : PagingModel>(
             }
         }
 
-        val hasItems = builder.lastUpdatedTimestamp?.invoke() != null
-
-        if (hasItems.not())
-            onLoading()
-
         val page = loadPage ?: 1
 
         val resultState = doApiCall(page)
         val nextPage = page + 1
 
-        if (builder.lastUpdatedTimestamp == null)
-            Log.d("Communication", "------------ Implement 'firstItemDatabase()' function to deal with loading ----------------")
-
         return try {
             when(resultState) {
-                AsyncState.Empty -> {
-                    onEmpty()
-                    MediatorResult.Error(Throwable("Empty data"))
-                }
-                is AsyncState.Error -> {
-                    onError(resultState.error)
-                    MediatorResult.Error(Throwable(resultState.error.errorBody))
-                }
+                AsyncState.Empty -> MediatorResult.Error(Throwable("Empty data"))
+                is AsyncState.Error -> MediatorResult.Error(Throwable(resultState.error.errorBody))
                 is AsyncState.Success -> {
                     val envelopeList = resultState.data
 
@@ -95,7 +76,7 @@ internal class RemoteAndLocalPagingSource<T : PagingModel>(
 
                     builder.insertAll?.invoke(envelopeList.data)
 
-                    MediatorResult.Success(envelopeList.data.size < builder.defaultPageSize)
+                    MediatorResult.Success(envelopeList.data.isEmpty())
                 }
             }
         } catch (e: Exception) {
