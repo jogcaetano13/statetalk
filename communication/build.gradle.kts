@@ -29,6 +29,15 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    namespace = "com.joel.communication"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 tasks {
@@ -88,10 +97,10 @@ publishing {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.8.0")
+    implementation("androidx.core:core-ktx:1.10.0")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     // Coroutines
@@ -99,16 +108,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     // Gson
-    api("com.google.code.gson:gson:2.9.0")
+    api("com.google.code.gson:gson:2.10.1")
 
     // Live data
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+    api("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    api("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
     // Paging
     api("androidx.paging:paging-runtime-ktx:3.1.1")
     api("androidx.paging:paging-common-ktx:3.1.1")
-    api("androidx.room:room-paging:2.4.3")
+    api("androidx.room:room-paging:2.5.1")
 
     api("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.2")

@@ -11,7 +11,6 @@ import com.joel.communication.models.ErrorResponse
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
-import com.joel.communication.states.DataFrom
 import com.joel.communication.states.ResultState
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.*
@@ -45,19 +44,19 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
         response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
     }
 
-    localCall?.let {
-        withContext(dispatcher.main()) {
-            trySend(ResultState.Success(it, DataFrom.Local))
+    if (response.offlineBuilder?.onlyLocalCall == true) {
+        localCall?.let {
+            trySend(ResultState.Success(it))
+        } ?: run {
+            trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
         }
+
+        return@flowOrCatch
     }
 
-    if (response.offlineBuilder?.onlyLocalCall == true)
-        return@flowOrCatch
-
-    if (localCall == null)
-        withContext(dispatcher.main()) {
-            trySend(ResultState.Loading)
-        }
+    withContext(dispatcher.main()) {
+        trySend(ResultState.Loading(localCall))
+    }
 
     builder.preCall?.invoke()
 
@@ -73,29 +72,44 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
                 if (result != null) {
                     response.onNetworkSuccess?.invoke(result)
 
-                    trySend(ResultState.Success(result, DataFrom.Network))
+                    if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
+                        trySend(ResultState.Success(result))
+
+                    } else {
+                        response.offlineBuilder?.call?.let {
+                            it()?.let {
+                                withContext(dispatcher.main()) {
+                                    ResultState.Success(it)
+                                }
+                            }
+                        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+                            if (it != null)
+                                withContext(dispatcher.main()) {
+                                    trySend(ResultState.Success(it))
+                                }
+                        }
+                    }
 
                 } else {
-                    trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
+                    trySend(ResultState.Error(
+                        error = ErrorResponse(
+                            404,
+                            "Response null",
+                            ErrorResponseType.EMPTY
+                        ),
+                        data = localCall
+                    ))
                 }
             }
         }
 
-        is AsyncState.Error -> withContext(dispatcher.main()) { trySend(ResultState.Error(call.error)) }
-        AsyncState.Empty -> {}
-    }
-
-    response.offlineBuilder?.call?.let {
-        it()?.let {
-            withContext(dispatcher.main()) {
-                ResultState.Success(it, DataFrom.Local)
-            }
+        is AsyncState.Error -> withContext(dispatcher.main()) {
+            trySend(ResultState.Error(
+                error = call.error,
+                data = localCall
+            ))
         }
-    } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-        if (it != null)
-            withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it, DataFrom.Local))
-            }
+        AsyncState.Empty -> {}
     }
 }
 
@@ -122,19 +136,19 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
         response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
     }
 
-    localCall?.let {
-        withContext(dispatcher.main()) {
-            trySend(ResultState.Success(it, DataFrom.Local))
+    if (response.offlineBuilder?.onlyLocalCall == true) {
+        localCall?.let {
+            trySend(ResultState.Success(it))
+        } ?: run {
+            trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
         }
+
+        return@flowOrCatch
     }
 
-    if (response.offlineBuilder?.onlyLocalCall == true)
-        return@flowOrCatch
-
-    if (localCall == null)
-        withContext(dispatcher.main()) {
-            trySend(ResultState.Loading)
-        }
+    withContext(dispatcher.main()) {
+        trySend(ResultState.Loading(localCall))
+    }
 
     builder.preCall?.invoke()
 
@@ -150,29 +164,44 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
                 if (result != null) {
                     response.onNetworkSuccess?.invoke(result)
 
-                    trySend(ResultState.Success(result, DataFrom.Network))
+                    if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
+                        trySend(ResultState.Success(result))
+
+                    } else {
+                        response.offlineBuilder?.call?.let {
+                            it()?.let {
+                                withContext(dispatcher.main()) {
+                                    ResultState.Success(it)
+                                }
+                            }
+                        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+                            if (it != null)
+                                withContext(dispatcher.main()) {
+                                    trySend(ResultState.Success(it))
+                                }
+                        }
+                    }
 
                 } else {
-                    trySend(ResultState.Error(ErrorResponse(404, "Response null", ErrorResponseType.EMPTY)))
+                    trySend(ResultState.Error(
+                        error = ErrorResponse(
+                            404,
+                            "Response null",
+                            ErrorResponseType.EMPTY
+                        ),
+                        data = localCall
+                    ))
                 }
             }
         }
 
-        is AsyncState.Error -> withContext(dispatcher.main()) { trySend(ResultState.Error(call.error)) }
-        AsyncState.Empty -> {}
-    }
-
-    response.offlineBuilder?.call?.let {
-        it()?.let {
-            withContext(dispatcher.main()) {
-                ResultState.Success(it, DataFrom.Local)
-            }
+        is AsyncState.Error -> withContext(dispatcher.main()) {
+            trySend(ResultState.Error(
+                error = call.error,
+                data = localCall
+            ))
         }
-    } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-        if (it != null)
-            withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it, DataFrom.Local))
-            }
+        AsyncState.Empty -> {}
     }
 }
 
@@ -199,24 +228,24 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
         response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
     }
 
-    localCall?.let {
-        withContext(dispatcher.main()) {
-            trySend(
-                if (it.isEmpty())
-                    ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY))
-                else
-                    ResultState.Success(it, DataFrom.Local)
-            )
+    if (response.offlineBuilder?.onlyLocalCall == true) {
+        localCall?.let {
+            withContext(dispatcher.main()) {
+                trySend(
+                    if (it.isEmpty())
+                        ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY))
+                    else
+                        ResultState.Success(it)
+                )
+            }
         }
+
+        return@flowOrCatch
     }
 
-    if (response.offlineBuilder?.onlyLocalCall == true)
-        return@flowOrCatch
-
-    if (localCall.isNullOrEmpty())
-        withContext(dispatcher.main()) {
-            trySend(ResultState.Loading)
-        }
+    withContext(dispatcher.main()) {
+        trySend(ResultState.Loading(localCall))
+    }
 
     builder.preCall?.invoke()
 
@@ -229,10 +258,26 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
             val result = call.data.body?.toList<T>(builder.dateFormat)
 
             withContext(dispatcher.main()) {
-                if (result.isNullOrEmpty().not()) {
-                    response.onNetworkSuccess?.invoke(result!!)
+                if (!result.isNullOrEmpty()) {
+                    response.onNetworkSuccess?.invoke(result)
 
-                    trySend(ResultState.Success(result!!, DataFrom.Network))
+                    if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
+                        trySend(ResultState.Success(result))
+
+                    } else {
+                        response.offlineBuilder?.call?.let {
+                            it()?.let {
+                                withContext(dispatcher.main()) {
+                                    ResultState.Success(it)
+                                }
+                            }
+                        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+                            if (it != null)
+                                withContext(dispatcher.main()) {
+                                    trySend(ResultState.Success(it))
+                                }
+                        }
+                    }
 
                 } else {
                     trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))
@@ -242,19 +287,6 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 
         is AsyncState.Error -> withContext(dispatcher.main()) { trySend(ResultState.Error(call.error)) }
         AsyncState.Empty -> {}
-    }
-
-    response.offlineBuilder?.call?.let {
-        it()?.let {
-            withContext(dispatcher.main()) {
-                ResultState.Success(it, DataFrom.Local)
-            }
-        }
-    } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-        if (it != null)
-            withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it, DataFrom.Local))
-            }
     }
 }
 

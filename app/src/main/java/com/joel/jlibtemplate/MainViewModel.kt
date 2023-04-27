@@ -14,4 +14,6 @@ class MainViewModel(
     fun getChallengesPaginated() = repository.getChallengesPaginated().cachedIn(viewModelScope)
 
     fun getChallengesPaginatedApi() = repository.getChallengesPaginatedOnlyApi()
+
+    fun getChallenges() = repository.getChallenges(dispatcher)
 }

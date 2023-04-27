@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joel.jlibtemplate.adapters.ChallengeAdapter
+import com.joel.jlibtemplate.adapters.ChallengeAdapterPaging
 import com.joel.jlibtemplate.adapters.ChallengeLoadStateAdapter
 import com.joel.jlibtemplate.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collectLatest
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val adapter = ChallengeAdapter()
+        val adapter = ChallengeAdapterPaging()
         val adapterWithFooter = adapter.withLoadStateFooter(ChallengeLoadStateAdapter())
 
         binding.itemsRv.also {
