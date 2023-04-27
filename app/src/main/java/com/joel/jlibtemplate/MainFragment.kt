@@ -29,7 +29,9 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View = requireContext().composeTheme {
         MainScreen(
-            goToCompose = {},
+            goToCompose = {
+                findNavController().navigate(R.id.action_mainFragment_to_composeExampleFragment)
+            },
             goToXml = {
                 findNavController().navigate(R.id.action_mainFragment_to_xmlExampleFragment)
             }

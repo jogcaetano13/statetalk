@@ -1,4 +1,4 @@
-package com.joel.jlibtemplate.xml
+package com.joel.jlibtemplate.mvvm.xml
 
 import android.os.Bundle
 import android.view.LayoutInflater
