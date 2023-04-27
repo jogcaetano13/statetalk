@@ -6,11 +6,11 @@ import com.joel.communication.builders.ClientBuilder
 import com.joel.communication.client.Client
 import com.joel.communication.dispatchers.CommunicationDispatcher
 import com.joel.communication.extensions.communicationClient
-import com.joel.jlibtemplate.MainViewModel
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import com.joel.jlibtemplate.respositories.ChallengeRepositoryImpl
 import com.joel.jlibtemplate.room.AppDatabase
 import com.joel.jlibtemplate.room.daos.ChallengeDao
+import com.joel.jlibtemplate.xml.XmlExampleViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
@@ -55,5 +55,5 @@ fun communicationDispatcher() = module {
 }
 
 fun viewModelModule() = module {
-    viewModel { MainViewModel(get(), get()) }
+    viewModel { XmlExampleViewModel(get(), get()) }
 }
