@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.joel.jlibtemplate.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_xmlExampleFragment"
+            app:destination="@id/xmlExampleFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_composeExampleFragment"
+            app:destination="@id/composeExampleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/xmlExampleFragment"
+        android:name="com.joel.jlibtemplate.mvvm.xml.XmlExampleFragment"
+        android:label="XmlExampleFragment" />
+
+    <fragment
+        android:id="@+id/composeExampleFragment"
+        android:name="com.joel.jlibtemplate.mvvm.compose.ComposeExampleFragment"
+        android:label="ComposeExampleFragment" />
+
+</navigation>

@@ -1,56 +1,30 @@
 package com.joel.jlibtemplate
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.joel.jlibtemplate.adapters.ChallengeAdapter
-import com.joel.jlibtemplate.adapters.ChallengeLoadStateAdapter
-import com.joel.jlibtemplate.databinding.ActivityMainBinding
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 
 class MainActivity : AppCompatActivity() {
-
-    private val viewModel by viewModel<MainViewModel>()
-
-    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private lateinit var navController: NavController
+    private lateinit var configuration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
-        val adapter = ChallengeAdapter()
-        val adapterWithFooter = adapter.withLoadStateFooter(ChallengeLoadStateAdapter())
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_main_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-        binding.itemsRv.also {
-            it.layoutManager = LinearLayoutManager(this)
-            it.adapter = adapterWithFooter
-            it.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        }
+        configuration = AppBarConfiguration(setOf(
+            R.id.mainFragment
+        ))
 
-        lifecycleScope.launch {
-            adapter.loadStateFlow.collectLatest {
-                if (it.refresh is LoadState.Error) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        (it.refresh as LoadState.Error).error.message,
-                        Toast.LENGTH_SHORT).show()
-                }
-
-                binding.loadingPb.isVisible = it.refresh is LoadState.Loading
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.getChallengesPaginated().collectLatest {
-                adapter.submitData(it)
-            }
-        }
+        setupActionBarWithNavController(navController, configuration)
     }
+
+    override fun onSupportNavigateUp(): Boolean = navController.navigateUp(configuration)
 }

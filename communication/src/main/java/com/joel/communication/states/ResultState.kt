@@ -2,14 +2,9 @@ package com.joel.communication.states
 
 import com.joel.communication.models.ErrorResponse
 
-sealed class ResultState<out T : Any> {
-    data class Error(val error: ErrorResponse) : ResultState<Nothing>()
-    object Loading : ResultState<Nothing>()
+sealed class ResultState<out T> {
+    data class Error<T>(val error: ErrorResponse, val data: T? = null) : ResultState<T>()
+    data class Loading<T>(val data: T? = null) : ResultState<T>()
     object Empty : ResultState<Nothing>()
-    data class Success<out T : Any>(val data: T, val from: DataFrom) : ResultState<T>()
-}
-
-enum class DataFrom {
-    Local,
-    Network
+    data class Success<out T>(val data: T) : ResultState<T>()
 }
