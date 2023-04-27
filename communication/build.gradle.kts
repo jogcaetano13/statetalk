@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val libVersion = "1.0.18"
+val libVersion = "1.0.22"
 
 android {
     compileSdk = Config.COMPILE_SDK
@@ -38,6 +38,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 tasks {
@@ -53,47 +60,47 @@ tasks {
     }
 }
 
-publishing {
-
-    repositories {
-        maven {
-            name = GitHub.NAME
-            url = uri(GitHub.URL)
-        }
-
-        val mavenArtifactPath = "$buildDir/outputs/aar/${Publish.ARTIFACT_ID}-release.aar"
-
-        publications {
-            register<MavenPublication>("gprRelease") {
-                groupId = Publish.GROUP_ID
-                artifactId = Publish.ARTIFACT_ID
-                version = libVersion
-                artifact(mavenArtifactPath)
-
-                artifact(tasks.getByName("javadocJar"))
-                artifact(tasks.getByName("sourcesJar"))
-
-                pom {
-                    withXml {
-                        // add dependencies to pom
-                        val dependencies = asNode().appendNode("dependencies")
-                        configurations.api.get().dependencies.forEach {
-                            if (it.group != null &&
-                                "unspecified" != it.name &&
-                                it.version != null) {
-
-                                val dependencyNode = dependencies.appendNode("dependency")
-                                dependencyNode.appendNode("groupId", it.group)
-                                dependencyNode.appendNode("artifactId", it.name)
-                                dependencyNode.appendNode("version", it.version)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+//publishing {
+//
+//    repositories {
+//        maven {
+//            name = GitHub.NAME
+//            url = uri(GitHub.URL)
+//        }
+//
+//        val mavenArtifactPath = "$buildDir/outputs/aar/${Publish.ARTIFACT_ID}-release.aar"
+//
+//        publications {
+//            register<MavenPublication>("gprRelease") {
+//                groupId = Publish.GROUP_ID
+//                artifactId = Publish.ARTIFACT_ID
+//                version = libVersion
+//                artifact(mavenArtifactPath)
+//
+//                artifact(tasks.getByName("javadocJar"))
+//                artifact(tasks.getByName("sourcesJar"))
+//
+//                pom {
+//                    withXml {
+//                        // add dependencies to pom
+//                        val dependencies = asNode().appendNode("dependencies")
+//                        configurations.api.get().dependencies.forEach {
+//                            if (it.group != null &&
+//                                "unspecified" != it.name &&
+//                                it.version != null) {
+//
+//                                val dependencyNode = dependencies.appendNode("dependency")
+//                                dependencyNode.appendNode("groupId", it.group)
+//                                dependencyNode.appendNode("artifactId", it.name)
+//                                dependencyNode.appendNode("version", it.version)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 dependencies {
 
