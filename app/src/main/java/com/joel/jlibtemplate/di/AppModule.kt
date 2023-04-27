@@ -6,8 +6,7 @@ import com.joel.communication.builders.ClientBuilder
 import com.joel.communication.client.Client
 import com.joel.communication.dispatchers.CommunicationDispatcher
 import com.joel.communication.extensions.communicationClient
-import com.joel.jlibtemplate.mvvm.compose.ComposeExampleViewModel
-import com.joel.jlibtemplate.mvvm.xml.XmlExampleViewModel
+import com.joel.jlibtemplate.MainViewModel
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import com.joel.jlibtemplate.respositories.ChallengeRepositoryImpl
 import com.joel.jlibtemplate.room.AppDatabase
@@ -56,6 +55,5 @@ fun communicationDispatcher() = module {
 }
 
 fun viewModelModule() = module {
-    viewModel { XmlExampleViewModel(get(), get()) }
-    viewModel { ComposeExampleViewModel(get(), get()) }
+    viewModel { MainViewModel(get(), get()) }
 }

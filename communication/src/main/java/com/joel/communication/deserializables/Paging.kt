@@ -38,7 +38,7 @@ inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
                     pagingBuilder
                 ) {
                     updateUrlPage(pagingBuilder.pageQueryName, it)
-                    this@responsePaginated.responseStateAsync<T>(dispatcher)
+                    this@responsePaginated.responseStateAsync(dispatcher)
                 }
             }
         ).flow
@@ -49,7 +49,7 @@ inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
                 pagingBuilder
             ) {
                 updateUrlPage(pagingBuilder.pageQueryName, it)
-                this@responsePaginated.responseStateAsync<T>(dispatcher)
+                this@responsePaginated.responseStateAsync(dispatcher)
             },
             pagingSourceFactory = pagingBuilder.itemsDataSource!!
         ).flow
