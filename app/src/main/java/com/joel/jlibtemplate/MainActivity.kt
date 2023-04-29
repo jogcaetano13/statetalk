@@ -43,12 +43,19 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT).show()
                 }
 
+                if (it.refresh is LoadState.Error) {
+                    binding.errorTextTv.text = (it.refresh as LoadState.Error).error.localizedMessage
+                    binding.errorTextTv.isVisible = true
+                } else {
+                    binding.errorTextTv.isVisible = false
+                }
+
                 binding.loadingPb.isVisible = it.refresh is LoadState.Loading
             }
         }
 
         lifecycleScope.launch {
-            viewModel.getChallengesPaginated().collectLatest {
+            viewModel.pagingState.collectLatest {
                 adapter.submitData(it)
             }
         }

@@ -77,18 +77,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
                             trySend(ResultState.Success(result))
 
                         } else {
-                            response.offlineBuilder?.call?.let {
-                                it()?.let {
-                                    withContext(dispatcher.main()) {
-                                        ResultState.Success(it)
-                                    }
-                                }
-                            } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-                                if (it != null)
-                                    withContext(dispatcher.main()) {
-                                        trySend(ResultState.Success(it))
-                                    }
-                            }
+                            // No-op. It will update from local database
                         }
 
                     } else {
@@ -112,6 +101,20 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
             }
             AsyncState.Empty -> {}
         }
+
+        response.offlineBuilder?.call?.let {
+            it()?.let {
+                withContext(dispatcher.main()) {
+                    ResultState.Success(it)
+                }
+            }
+        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+            if (it != null)
+                withContext(dispatcher.main()) {
+                    trySend(ResultState.Success(it))
+                }
+        }
+
     } catch (e: Exception) {
         trySend(ResultState.Error(
             error = e.apiError,
@@ -176,18 +179,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
                             trySend(ResultState.Success(result))
 
                         } else {
-                            response.offlineBuilder?.call?.let {
-                                it()?.let {
-                                    withContext(dispatcher.main()) {
-                                        ResultState.Success(it)
-                                    }
-                                }
-                            } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-                                if (it != null)
-                                    withContext(dispatcher.main()) {
-                                        trySend(ResultState.Success(it))
-                                    }
-                            }
+                            // No-op. It will update from local database
                         }
 
                     } else {
@@ -211,6 +203,20 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
             }
             AsyncState.Empty -> {}
         }
+
+        response.offlineBuilder?.call?.let {
+            it()?.let {
+                withContext(dispatcher.main()) {
+                    ResultState.Success(it)
+                }
+            }
+        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+            if (it != null)
+                withContext(dispatcher.main()) {
+                    trySend(ResultState.Success(it))
+                }
+        }
+
     } catch (e: Exception) {
         trySend(ResultState.Error(
             error = e.apiError,
@@ -280,18 +286,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                             trySend(ResultState.Success(result))
 
                         } else {
-                            response.offlineBuilder?.call?.let {
-                                it()?.let {
-                                    withContext(dispatcher.main()) {
-                                        ResultState.Success(it)
-                                    }
-                                }
-                            } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-                                if (it != null)
-                                    withContext(dispatcher.main()) {
-                                        trySend(ResultState.Success(it))
-                                    }
-                            }
+                            // No-op. It will update from local database
                         }
 
                     } else {
@@ -308,6 +303,20 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
             }
             AsyncState.Empty -> {}
         }
+
+        response.offlineBuilder?.call?.let {
+            it()?.let {
+                withContext(dispatcher.main()) {
+                    ResultState.Success(it)
+                }
+            }
+        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+            if (it != null)
+                withContext(dispatcher.main()) {
+                    trySend(ResultState.Success(it))
+                }
+        }
+
     } catch (e: Exception) {
         trySend(ResultState.Error(
             error = e.apiError,
