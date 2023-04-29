@@ -109,10 +109,11 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
                 }
             }
         } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-            if (it != null)
+            it?.let {
                 withContext(dispatcher.main()) {
                     trySend(ResultState.Success(it))
                 }
+            }
         }
 
     } catch (e: Exception) {
@@ -211,10 +212,11 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
                 }
             }
         } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-            if (it != null)
+            it?.let {
                 withContext(dispatcher.main()) {
                     trySend(ResultState.Success(it))
                 }
+            }
         }
 
     } catch (e: Exception) {
@@ -305,16 +307,17 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
         }
 
         response.offlineBuilder?.call?.let {
-            it()?.let {
+            if (!it().isNullOrEmpty()) {
                 withContext(dispatcher.main()) {
                     ResultState.Success(it)
                 }
             }
         } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-            if (it != null)
+            if (!it.isNullOrEmpty()) {
                 withContext(dispatcher.main()) {
                     trySend(ResultState.Success(it))
                 }
+            }
         }
 
     } catch (e: Exception) {
