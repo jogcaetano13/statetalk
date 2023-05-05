@@ -281,8 +281,11 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                 val result = call.data.body?.toList<T>(builder.dateFormat)
 
                 withContext(dispatcher.main()) {
+                    result?.let {
+                        response.onNetworkSuccess?.invoke(it)
+                    }
+
                     if (!result.isNullOrEmpty()) {
-                        response.onNetworkSuccess?.invoke(result)
 
                         if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
                             trySend(ResultState.Success(result))
@@ -292,7 +295,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                         }
 
                     } else {
-                        trySend(ResultState.Error(ErrorResponse(404, "Response empty", ErrorResponseType.EMPTY)))
+                        trySend(ResultState.EmptyData)
                     }
                 }
             }
