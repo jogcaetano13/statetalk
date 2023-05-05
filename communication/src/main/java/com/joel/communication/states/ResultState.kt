@@ -7,5 +7,4 @@ sealed class ResultState<out T> {
     data class Loading<T>(val data: T? = null) : ResultState<T>()
     object Empty : ResultState<Nothing>()
     data class Success<out T>(val data: T) : ResultState<T>()
-    object EmptyData : ResultState<Nothing>()
 }

@@ -295,7 +295,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                         }
 
                     } else {
-                        trySend(ResultState.EmptyData)
+                        trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
                     }
                 }
             }
