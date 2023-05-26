@@ -19,7 +19,7 @@ internal class RemoteAndLocalPagingSource<T : PagingModel>(
 
     override suspend fun initialize(): InitializeAction {
         return if (builder.lastUpdatedTimestamp?.invoke() != null &&
-            System.currentTimeMillis() - builder.lastUpdatedTimestamp?.invoke()!! < builder.cacheTimeout.millis &&
+            System.currentTimeMillis() - builder.lastUpdatedTimestamp?.invoke()!! < builder.cacheTimeout.inWholeMilliseconds &&
             builder.refresh.not()
         )
             InitializeAction.SKIP_INITIAL_REFRESH

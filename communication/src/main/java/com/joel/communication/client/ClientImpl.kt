@@ -9,7 +9,11 @@ import com.joel.communication.request.RequestBuilder
 import okhttp3.OkHttpClient
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.*
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 internal class ClientImpl private constructor() : Client {
 
@@ -68,9 +72,9 @@ internal class ClientImpl private constructor() : Client {
             addInterceptor(it)
         }
 
-        connectTimeout(builder.timeoutBuilder.connectionTimeout.millis, TimeUnit.MILLISECONDS)
-        readTimeout(builder.timeoutBuilder.readTimeout.millis, TimeUnit.MILLISECONDS)
-        writeTimeout(builder.timeoutBuilder.writeTimeout.millis, TimeUnit.MILLISECONDS)
+        connectTimeout(builder.timeoutBuilder.connectionTimeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
+        readTimeout(builder.timeoutBuilder.readTimeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
+        writeTimeout(builder.timeoutBuilder.writeTimeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)
         return this
     }
 }

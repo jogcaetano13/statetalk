@@ -1,7 +1,8 @@
 package com.joel.communication.builders
 
 import com.joel.communication.annotations.CommunicationsMarker
-import com.joel.communication.valueclasses.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @CommunicationsMarker
 class TimeoutBuilder internal constructor() {
@@ -12,7 +13,7 @@ class TimeoutBuilder internal constructor() {
      * The connect timeout is applied when connecting a TCP socket to the target host. The default
      * value is 15 seconds.
      */
-    var connectionTimeout: Duration = Duration.seconds(15)
+    var connectionTimeout: Duration = 15.seconds
 
     /**
      * Sets the default read timeout for new connections. A value of 0 means no timeout.
@@ -21,7 +22,7 @@ class TimeoutBuilder internal constructor() {
      *
      * The default value is 15 seconds.
      */
-    var readTimeout: Duration = Duration.seconds(15)
+    var readTimeout: Duration = 15.seconds
 
     /**
      * Sets the default write timeout for new connections. A value of 0 means no timeout.
@@ -29,5 +30,5 @@ class TimeoutBuilder internal constructor() {
      * The write timeout is applied for individual write IO operations. The default value is 15
      * seconds.
      */
-    var writeTimeout: Duration = Duration.seconds(15)
+    var writeTimeout: Duration = 15.seconds
 }

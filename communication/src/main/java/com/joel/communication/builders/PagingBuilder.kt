@@ -6,7 +6,8 @@ import com.joel.communication.annotations.CommunicationsMarker
 import com.joel.communication.models.PagingModel
 import com.joel.communication.paging.NetworkPagingSource
 import com.joel.communication.paging.RemoteAndLocalPagingSource
-import com.joel.communication.valueclasses.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 @CommunicationsMarker
 class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
@@ -46,7 +47,7 @@ class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
      *
      * This has no effect if the [refresh] flag is true.
      */
-    var cacheTimeout: Duration = Duration.hours(1)
+    var cacheTimeout: Duration = 1.hours
 
     /**
      * Force [RemoteAndLocalPagingSource] to refresh when starting.
