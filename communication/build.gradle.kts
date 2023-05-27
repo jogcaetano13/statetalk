@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val libVersion = "1.0.27"
+val libVersion = "1.0.28"
 
 android {
     compileSdk = Config.COMPILE_SDK

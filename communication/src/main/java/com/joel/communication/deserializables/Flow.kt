@@ -310,13 +310,13 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
         }
 
         response.offlineBuilder?.call?.let {
-            if (!it().isNullOrEmpty()) {
+            it()?.let {
                 withContext(dispatcher.main()) {
                     ResultState.Success(it)
                 }
             }
         } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-            if (!it.isNullOrEmpty()) {
+            it?.let {
                 withContext(dispatcher.main()) {
                     trySend(ResultState.Success(it))
                 }
