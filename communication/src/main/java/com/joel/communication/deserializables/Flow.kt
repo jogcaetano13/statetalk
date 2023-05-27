@@ -252,12 +252,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     if (response.offlineBuilder?.onlyLocalCall == true) {
         localCall?.let {
             withContext(dispatcher.main()) {
-                trySend(
-                    if (it.isEmpty())
-                        ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY))
-                    else
-                        ResultState.Success(it)
-                )
+                trySend(ResultState.Success(it))
             }
         }
 
@@ -280,11 +275,8 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                 val result = call.data.body?.toList<T>(builder.dateFormat)
 
                 withContext(dispatcher.main()) {
-                    result?.let {
-                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(it) }
-                    }
-
-                    if (!result.isNullOrEmpty()) {
+                    if (result != null) {
+                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(result) }
 
                         if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
                             trySend(ResultState.Success(result))
@@ -292,7 +284,6 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
                         } else {
                             // No-op. It will update from local database
                         }
-
                     } else {
                         trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
                     }
