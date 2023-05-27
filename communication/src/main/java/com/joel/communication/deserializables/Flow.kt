@@ -12,7 +12,6 @@ import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
 import com.joel.communication.states.AsyncState
 import com.joel.communication.states.ResultState
-import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
@@ -31,7 +30,7 @@ import kotlinx.coroutines.withContext
 inline fun <reified T : Any> CommunicationRequest.responseFlow(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
-) = flowOn(dispatcher) {
+) = channelFlow<ResultState<T>> {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
@@ -51,7 +50,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
             trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
         }
 
-        return@flowOn
+        return@channelFlow
     }
 
     withContext(dispatcher.main()) {
@@ -71,7 +70,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 
                 withContext(dispatcher.main()) {
                     if (result != null) {
-                        response.onNetworkSuccess?.invoke(result)
+                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(result) }
 
                         if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
                             trySend(ResultState.Success(result))
@@ -134,7 +133,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit = {}
-) = flowOn(dispatcher) {
+) = channelFlow<ResultState<T>> {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
@@ -154,7 +153,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
             trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
         }
 
-        return@flowOn
+        return@channelFlow
     }
 
     withContext(dispatcher.main()) {
@@ -174,7 +173,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 
                 withContext(dispatcher.main()) {
                     if (result != null) {
-                        response.onNetworkSuccess?.invoke(result)
+                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(result) }
 
                         if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
                             trySend(ResultState.Success(result))
@@ -237,7 +236,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
-) = flowOn(dispatcher) {
+) = channelFlow<ResultState<List<T>>> {
     val response = ResponseBuilder<List<T>>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
@@ -262,7 +261,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
             }
         }
 
-        return@flowOn
+        return@channelFlow
     }
 
     withContext(dispatcher.main()) {
@@ -282,7 +281,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 
                 withContext(dispatcher.main()) {
                     result?.let {
-                        response.onNetworkSuccess?.invoke(it)
+                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(it) }
                     }
 
                     if (!result.isNullOrEmpty()) {
@@ -330,11 +329,3 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
         ))
     }
 }
-
-@PublishedApi
-internal fun <T : Any> flowOn(
-    communicationDispatcher: CommunicationDispatcher,
-    block: suspend ProducerScope<ResultState<T>>.() -> Unit
-) = channelFlow {
-    block(this)
-}.flowOn(communicationDispatcher.default())
