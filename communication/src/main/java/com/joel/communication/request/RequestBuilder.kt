@@ -1,15 +1,20 @@
 package com.joel.communication.request
 
-import com.joel.communication.alias.*
+import com.joel.communication.alias.Body
+import com.joel.communication.alias.Header
+import com.joel.communication.alias.Headers
+import com.joel.communication.alias.Parameter
+import com.joel.communication.alias.Parameters
 import com.joel.communication.annotations.CommunicationsMarker
 import com.joel.communication.enums.HttpHeader
 import com.joel.communication.enums.HttpMethod
 import com.joel.communication.exceptions.CommunicationsException
 import com.joel.communication.extensions.toJson
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.*
+import java.util.Date
 
 @CommunicationsMarker
 class RequestBuilder internal constructor() {
@@ -152,6 +157,25 @@ class RequestBuilder internal constructor() {
      */
     fun <T : Any> body(body: T) {
         this.body = body.toJson(dateFormat).toRequestBody("application/json; charset=utf-8".toMediaType())
+    }
+
+    /**
+     * The body parameter of the request.
+     * This should be used only with [HttpMethod.POST]
+     *
+     * @param body the object of type [RequestBody] to send
+     */
+    fun body(body: RequestBody) {
+        this.body = body
+    }
+
+    /**
+     * This is used to create a new multipart request body
+     *
+     * @param block lambda receiver to create a new request body with multipart
+     */
+    fun body(block: MultipartBody.Builder.() -> Unit) {
+        this.body = MultipartBody.Builder().also(block).build()
     }
 
     private fun parameterByKey(key: String) = parameters.find { it.first == key }
