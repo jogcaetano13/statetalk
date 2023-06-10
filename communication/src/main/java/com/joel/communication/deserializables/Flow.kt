@@ -66,7 +66,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 
         when(call) {
             is AsyncState.Success -> {
-                val result = call.data.body?.toModel<T>(builder.dateFormat)
+                val result = call.data.body?.string()?.toModel<T>(builder.dateFormat)
 
                 withContext(dispatcher.main()) {
                     if (result != null) {
@@ -169,7 +169,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 
         when(call) {
             is AsyncState.Success -> {
-                val result = call.data.body?.toModelWrapped<T>(builder.dateFormat)
+                val result = call.data.body?.string()?.toModelWrapped<T>(builder.dateFormat)
 
                 withContext(dispatcher.main()) {
                     if (result != null) {
@@ -272,7 +272,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 
         when(call) {
             is AsyncState.Success -> {
-                val result = call.data.body?.toList<T>(builder.dateFormat)
+                val result = call.data.body?.string()?.toList<T>(builder.dateFormat)
 
                 withContext(dispatcher.main()) {
                     if (result != null) {

@@ -3,7 +3,7 @@
 package com.joel.communication.deserializables
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.asLiveData
 import com.joel.communication.dispatchers.CommunicationDispatcher
 import com.joel.communication.dispatchers.CommunicationDispatcherImpl
 import com.joel.communication.request.CommunicationRequest
@@ -20,11 +20,7 @@ import com.joel.communication.states.ResultState
 inline fun <reified T : Any> CommunicationRequest.responseLiveData(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
-) = liveData {
-    responseFlow(dispatcher, responseBuilder).collect {
-        emit(it)
-    }
-}
+) = responseFlow(dispatcher, responseBuilder).asLiveData()
 
 /**
  * Deserialize the request into a [LiveData] wrapped by the data json object.
@@ -36,11 +32,7 @@ inline fun <reified T : Any> CommunicationRequest.responseLiveData(
 inline fun <reified T : Any> CommunicationRequest.responseWrappedLiveData(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
-) = liveData {
-    responseWrappedFlow(dispatcher, responseBuilder).collect {
-        emit(it)
-    }
-}
+) = responseWrappedFlow(dispatcher, responseBuilder).asLiveData()
 
 /**
  * Deserialize the request into a [LiveData] list wrapped by the data json object.
@@ -52,8 +44,4 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedLiveData(
 inline fun <reified T : Any> CommunicationRequest.responseListLiveData(
     dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
-) = liveData {
-    responseListFlow(dispatcher, responseBuilder).collect {
-        emit(it)
-    }
-}
+) = responseListFlow(dispatcher, responseBuilder).asLiveData()

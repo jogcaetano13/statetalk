@@ -27,7 +27,7 @@ suspend fun CommunicationRequest.responseJsonObject(
     AsyncState.Empty -> throw IllegalStateException("Empty not used!")
     is AsyncState.Error -> AsyncState.Error(call.error)
     is AsyncState.Success -> {
-        val json = call.data.body?.toJsonObject()
+        val json = call.data.body?.string()?.toJsonObject()
 
         withContext(dispatcher.main()) {
             json?.let {

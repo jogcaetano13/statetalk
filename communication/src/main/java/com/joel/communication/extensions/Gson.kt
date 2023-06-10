@@ -30,7 +30,7 @@ internal inline fun <reified T> String.toModelWrapped(datePattern: String): T? {
     return createGson(datePattern).fromJson<Envelope<T>>(this, type).data
 }
 
-internal fun <T> T.toJson(datePattern: String = "yyyy-MM-dd'T'HH:mm:ss.ZZZZZZZ"): String {
+internal fun <T> T.toJson(datePattern: String): String {
     val type = object : TypeToken<T>() {}.type
     return createGson(datePattern).toJson(this, type)
 }

@@ -7,7 +7,6 @@ import com.joel.communication.response.CommunicationResponse
 import com.joel.communication.states.AsyncState
 import kotlinx.coroutines.withContext
 
-@Suppress("BlockingMethodInNonBlockingContext")
 @PublishedApi
 internal suspend fun CommunicationRequest.apiCall(
     dispatcher: CommunicationDispatcher
@@ -20,7 +19,8 @@ internal suspend fun CommunicationRequest.apiCall(
                 AsyncState.Success(CommunicationResponse(
                     response.code,
                     headers,
-                    response.body?.string()
+                    response.body,
+                    null
                 ))
             else
                 AsyncState.Error(response.getApiError())

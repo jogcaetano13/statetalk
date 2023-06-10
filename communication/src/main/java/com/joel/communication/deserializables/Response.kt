@@ -15,19 +15,27 @@ suspend fun CommunicationRequest.response(
 ): CommunicationResponse {
     return when(val call = apiCall(dispatcher)) {
         AsyncState.Empty -> throw IllegalStateException("Empty is not used!")
-        is AsyncState.Error -> CommunicationResponse(call.error.code, headers, call.error.errorBody)
-        is AsyncState.Success -> CommunicationResponse(call.data.code, headers, call.data.body)
+        is AsyncState.Error -> CommunicationResponse(
+            code = call.error.code, headers,
+            body = null,
+            errorBody = call.error.errorBody
+        )
+        is AsyncState.Success -> CommunicationResponse(
+            code = call.data.code, headers,
+            body = call.data.body,
+            errorBody = null
+        )
     }
 }
 
 inline fun <reified T> CommunicationResponse.toModel(
     datePattern: String = "yyyy-MM-dd'T'HH:mm:ss.ZZZZZZZ"
-): T? = body?.toModel(datePattern)
+): T? = body?.string()?.toModel(datePattern)
 
 inline fun <reified T> CommunicationResponse.toList(
     datePattern: String = "yyyy-MM-dd'T'HH:mm:ss.ZZZZZZZ"
-): List<T> = body?.toList(datePattern) ?: emptyList()
+): List<T> = body?.string()?.toList(datePattern) ?: emptyList()
 
 inline fun <reified T> CommunicationResponse.toModelWrapped(
     datePattern: String = "yyyy-MM-dd'T'HH:mm:ss.ZZZZZZZ"
-): T? = body?.toModelWrapped(datePattern)
+): T? = body?.string()?.toModelWrapped(datePattern)

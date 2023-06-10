@@ -4,7 +4,11 @@ import com.joel.communication.dispatchers.CommunicationDispatcher
 import com.joel.communication.dispatchers.CommunicationDispatcherImpl
 import com.joel.communication.enums.ErrorResponseType
 import com.joel.communication.envelope.EnvelopeList
-import com.joel.communication.extensions.*
+import com.joel.communication.extensions.apiCall
+import com.joel.communication.extensions.toEnvelopeList
+import com.joel.communication.extensions.toList
+import com.joel.communication.extensions.toModel
+import com.joel.communication.extensions.toModelWrapped
 import com.joel.communication.models.ErrorResponse
 import com.joel.communication.request.CommunicationRequest
 import com.joel.communication.response.ResponseBuilder
@@ -37,7 +41,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
         AsyncState.Empty -> throw IllegalStateException("Empty not used!")
         is AsyncState.Error -> AsyncState.Error(call.error)
         is AsyncState.Success -> {
-            val result = call.data.body?.toModel<T>(builder.dateFormat)
+            val result = call.data.body?.string()?.toModel<T>(builder.dateFormat)
 
             withContext(dispatcher.main()) {
                 result?.let {
@@ -76,7 +80,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
         AsyncState.Empty -> throw IllegalStateException("Empty not used!")
         is AsyncState.Error -> AsyncState.Error(call.error)
         is AsyncState.Success -> {
-            val result = call.data.body?.toList<T>(builder.dateFormat)
+            val result = call.data.body?.string()?.toList<T>(builder.dateFormat)
 
             withContext(dispatcher.main()) {
                 result?.let {
@@ -115,7 +119,7 @@ suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
         AsyncState.Empty -> throw IllegalStateException("Empty not used!")
         is AsyncState.Error -> AsyncState.Error(call.error)
         is AsyncState.Success -> {
-            val result = call.data.body?.toModelWrapped<T>(builder.dateFormat)
+            val result = call.data.body?.string()?.toModelWrapped<T>(builder.dateFormat)
 
             withContext(dispatcher.main()) {
                 result?.let {
@@ -135,7 +139,7 @@ internal suspend inline fun <reified T : Any> CommunicationRequest.responseState
         AsyncState.Empty -> throw IllegalStateException("Empty not used!")
         is AsyncState.Error -> AsyncState.Error(call.error)
         is AsyncState.Success -> {
-            val envelopeList = call.data.body?.toEnvelopeList<T>(builder.dateFormat)
+            val envelopeList = call.data.body?.string()?.toEnvelopeList<T>(builder.dateFormat)
             envelopeList?.let {
                 AsyncState.Success(it)
             } ?: AsyncState.Empty
