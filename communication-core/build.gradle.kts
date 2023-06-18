@@ -26,7 +26,7 @@ tasks {
     }
 }
 
-group = Publish.GROUP_CORE_ID
+group = Publish.GROUP_ID
 version = Publish.LIBRARY_VERSION
 
 publishing {
@@ -37,7 +37,7 @@ publishing {
             url = uri(GitHub.URL)
         }
 
-        val mavenArtifactPath = "$buildDir/libs/${Publish.ARTIFACT_ID}-${Publish.LIBRARY_VERSION}.jar"
+        val mavenArtifactPath = "$buildDir/libs/${Publish.ARTIFACT_CORE_ID}-${Publish.LIBRARY_VERSION}.jar"
 
         publications {
             register<MavenPublication>("gprRelease") {
