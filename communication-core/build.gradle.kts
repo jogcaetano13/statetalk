@@ -37,7 +37,7 @@ publishing {
             url = uri(GitHub.URL)
         }
 
-        val mavenArtifactPath = "$buildDir/outputs/aar/${Publish.ARTIFACT_CORE_ID}-release.aar"
+        val mavenArtifactPath = "$buildDir/libs/${Publish.ARTIFACT_ID}-${Publish.LIBRARY_VERSION}.jar"
 
         publications {
             register<MavenPublication>("gprRelease") {
