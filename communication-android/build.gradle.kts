@@ -42,6 +42,9 @@ tasks {
     }
 }
 
+group = Publish.GROUP_ID
+version = Publish.LIBRARY_VERSION
+
 publishing {
 
     repositories {
