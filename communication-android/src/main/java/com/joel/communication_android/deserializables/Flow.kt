@@ -1,17 +1,21 @@
-@file:Suppress("BlockingMethodInNonBlockingContext")
-
 package com.joel.communication_android.deserializables
 
 import com.joel.communication_android.builders.ResponseBuilder
-import com.joel.communication_android.dispatchers.CommunicationDispatcher
-import com.joel.communication_android.dispatchers.CommunicationDispatcherImpl
-import com.joel.communication_android.enums.ErrorResponseType
-import com.joel.communication_android.exceptions.CommunicationsException
-import com.joel.communication_android.extensions.*
-import com.joel.communication_android.states.AsyncState
+import com.joel.communication_android.extensions.toError
+import com.joel.communication_android.extensions.toList
+import com.joel.communication_android.extensions.toModel
+import com.joel.communication_android.extensions.toModelWrapped
 import com.joel.communication_android.states.ResultState
+import com.joel.communication_core.enums.ErrorResponseType
+import com.joel.communication_core.exceptions.CommunicationsException
+import com.joel.communication_core.extensions.apiError
 import com.joel.communication_core.request.CommunicationRequest
-import kotlinx.coroutines.flow.*
+import com.joel.communication_core.response.CommunicationResponse
+import com.joel.communication_core.response.ErrorResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 /**
@@ -27,102 +31,12 @@ import kotlinx.coroutines.withContext
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseFlow(
-    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
-) = channelFlow<ResultState<T>> {
-    val response = ResponseBuilder<T>().also(responseBuilder)
-
-    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
-        throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
-
-    if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
-        throw CommunicationsException("You must only call 'call()' or 'observe()', not both of them!")
-
-    val localCall = withContext(dispatcher.io()) {
-        response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
-    }
-
-    if (response.offlineBuilder?.onlyLocalCall == true) {
-        localCall?.let {
-            trySend(ResultState.Success(it))
-        } ?: run {
-            trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
-        }
-
-        return@channelFlow
-    }
-
-    withContext(dispatcher.main()) {
-        trySend(ResultState.Loading(localCall))
-    }
-
-    builder.preCall?.invoke()
-
-    try {
-        val call = apiCall(dispatcher)
-
-        response.post?.invoke()
-
-        when(call) {
-            is AsyncState.Success -> {
-                val result = call.data.body?.string()?.toModel<T>(builder.dateFormat)
-
-                withContext(dispatcher.main()) {
-                    if (result != null) {
-                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(result) }
-
-                        if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
-                            trySend(ResultState.Success(result))
-
-                        } else {
-                            // No-op. It will update from local database
-                        }
-
-                    } else {
-                        trySend(
-                            ResultState.Error(
-                            error = ErrorResponse(
-                                404,
-                                "Response null",
-                                ErrorResponseType.EMPTY
-                            ),
-                            data = localCall
-                        ))
-                    }
-                }
-            }
-
-            is AsyncState.Error -> withContext(dispatcher.main()) {
-                trySend(
-                    ResultState.Error(
-                    error = call.error,
-                    data = localCall
-                ))
-            }
-            AsyncState.Empty -> {}
-        }
-
-        response.offlineBuilder?.call?.let {
-            it()?.let {
-                withContext(dispatcher.main()) {
-                    ResultState.Success(it)
-                }
-            }
-        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-            it?.let {
-                withContext(dispatcher.main()) {
-                    trySend(ResultState.Success(it))
-                }
-            }
-        }
-
-    } catch (e: Exception) {
-        trySend(
-            ResultState.Error(
-            error = e.apiError,
-            data = localCall
-        ))
-    }
+): Flow<ResultState<T>> {
+    return toFlow(
+        responseBuilder = responseBuilder,
+        deserializeBlock = { it.toModel<T>(builder.dateFormat) }
+    )
 }
 
 /**
@@ -133,102 +47,12 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
-    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit = {}
-) = channelFlow<ResultState<T>> {
-    val response = ResponseBuilder<T>().also(responseBuilder)
-
-    if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
-        throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
-
-    if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
-        throw CommunicationsException("You must only call 'call()' or 'observe()', not both of them!")
-
-    val localCall = withContext(dispatcher.io()) {
-        response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
-    }
-
-    if (response.offlineBuilder?.onlyLocalCall == true) {
-        localCall?.let {
-            trySend(ResultState.Success(it))
-        } ?: run {
-            trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
-        }
-
-        return@channelFlow
-    }
-
-    withContext(dispatcher.main()) {
-        trySend(ResultState.Loading(localCall))
-    }
-
-    builder.preCall?.invoke()
-
-    try {
-        val call = apiCall(dispatcher)
-
-        response.post?.invoke()
-
-        when(call) {
-            is AsyncState.Success -> {
-                val result = call.data.body?.string()?.toModelWrapped<T>(builder.dateFormat)
-
-                withContext(dispatcher.main()) {
-                    if (result != null) {
-                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(result) }
-
-                        if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
-                            trySend(ResultState.Success(result))
-
-                        } else {
-                            // No-op. It will update from local database
-                        }
-
-                    } else {
-                        trySend(
-                            ResultState.Error(
-                            error = ErrorResponse(
-                                404,
-                                "Response null",
-                                ErrorResponseType.EMPTY
-                            ),
-                            data = localCall
-                        ))
-                    }
-                }
-            }
-
-            is AsyncState.Error -> withContext(dispatcher.main()) {
-                trySend(
-                    ResultState.Error(
-                    error = call.error,
-                    data = localCall
-                ))
-            }
-            AsyncState.Empty -> {}
-        }
-
-        response.offlineBuilder?.call?.let {
-            it()?.let {
-                withContext(dispatcher.main()) {
-                    ResultState.Success(it)
-                }
-            }
-        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
-            it?.let {
-                withContext(dispatcher.main()) {
-                    trySend(ResultState.Success(it))
-                }
-            }
-        }
-
-    } catch (e: Exception) {
-        trySend(
-            ResultState.Error(
-            error = e.apiError,
-            data = localCall
-        ))
-    }
+): Flow<ResultState<T>> {
+    return toFlow(
+        responseBuilder = responseBuilder,
+        deserializeBlock = { it.toModelWrapped<T>(builder.dateFormat) }
+    )
 }
 
 /**
@@ -239,10 +63,20 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
 inline fun <reified T : Any> CommunicationRequest.responseListFlow(
-    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl,
     crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
-) = channelFlow<ResultState<List<T>>> {
-    val response = ResponseBuilder<List<T>>().also(responseBuilder)
+): Flow<ResultState<List<T>>> {
+    return toFlow(
+        responseBuilder = responseBuilder,
+        deserializeBlock = { it.toList(builder.dateFormat) }
+    )
+}
+
+@PublishedApi
+internal inline fun <reified T : Any> CommunicationRequest.toFlow(
+    crossinline responseBuilder: ResponseBuilder<T>.() -> Unit,
+    crossinline deserializeBlock: (CommunicationResponse) -> T?
+): Flow<ResultState<T>> = channelFlow {
+    val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
         throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
@@ -250,80 +84,76 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     if (response.offlineBuilder?.call != null && response.offlineBuilder?.callFlow != null)
         throw CommunicationsException("You must only call 'call()' or 'observe()', not both of them!")
 
-    val localCall = withContext(dispatcher.io()) {
+    val localCall = withContext(Dispatchers.IO) {
         response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()
     }
 
     if (response.offlineBuilder?.onlyLocalCall == true) {
         localCall?.let {
-            withContext(dispatcher.main()) {
-                trySend(ResultState.Success(it))
-            }
+            trySend(ResultState.Success(it))
+        } ?: run {
+            trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.Empty)))
         }
 
         return@channelFlow
     }
 
-    withContext(dispatcher.main()) {
-        trySend(ResultState.Loading(localCall))
-    }
+    trySend(ResultState.Loading(localCall))
 
     builder.preCall?.invoke()
 
     try {
-        val call = apiCall(dispatcher)
+        val callResponse = response()
 
         response.post?.invoke()
 
-        when(call) {
-            is AsyncState.Success -> {
-                val result = call.data.body?.string()?.toList<T>(builder.dateFormat)
+        if (callResponse.isSuccess) {
+            val result = deserializeBlock(callResponse)
 
-                withContext(dispatcher.main()) {
-                    if (result != null) {
-                        withContext(dispatcher.io()) { response.onNetworkSuccess?.invoke(result) }
+            result?.let {
+                withContext(Dispatchers.IO) { response.onNetworkSuccess?.invoke(result) }
 
-                        if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
-                            trySend(ResultState.Success(result))
+                if (response.offlineBuilder?.call == null || response.offlineBuilder?.callFlow == null) {
+                    trySend(ResultState.Success(result))
 
-                        } else {
-                            // No-op. It will update from local database
-                        }
-                    } else {
-                        trySend(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.EMPTY)))
-                    }
+                } else {
+                    // No-op. It will update from local database
                 }
-            }
-
-            is AsyncState.Error -> withContext(dispatcher.main()) {
+            } ?: run {
                 trySend(
                     ResultState.Error(
-                    error = call.error,
+                        error = ErrorResponse(
+                            404,
+                            "Response null",
+                            ErrorResponseType.Empty
+                        ),
+                        data = localCall
+                    ))
+            }
+
+        } else {
+            trySend(
+                ResultState.Error(
+                    error = callResponse.toError(),
                     data = localCall
                 ))
-            }
-            AsyncState.Empty -> {}
         }
 
         response.offlineBuilder?.call?.let {
             it()?.let {
-                withContext(dispatcher.main()) {
-                    ResultState.Success(it)
-                }
+                ResultState.Success(it)
             }
         } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
             it?.let {
-                withContext(dispatcher.main()) {
-                    trySend(ResultState.Success(it))
-                }
+                trySend(ResultState.Success(it))
             }
         }
 
     } catch (e: Exception) {
         trySend(
             ResultState.Error(
-            error = e.apiError,
-            data = localCall
-        ))
+                error = e.apiError,
+                data = localCall
+            ))
     }
 }
