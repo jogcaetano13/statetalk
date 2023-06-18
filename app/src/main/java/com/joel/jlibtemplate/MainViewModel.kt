@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.joel.communication.dispatchers.CommunicationDispatcher
-import com.joel.communication.states.ResultState
+import com.joel.communication_android.states.ResultState
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val dispatcher: CommunicationDispatcher,
     private val repository: ChallengeRepository
 ) : ViewModel() {
 
@@ -30,14 +28,14 @@ class MainViewModel(
         _challengesState.asStateFlow()
     }
 
-    private fun getChallengesPaginated() = viewModelScope.launch(dispatcher.main()) {
+    private fun getChallengesPaginated() = viewModelScope.launch {
         repository.getChallengesPaginated().cachedIn(viewModelScope).collectLatest {
             _pagingState.value = it
         }
     }
 
-    private fun getChallenges() = viewModelScope.launch(dispatcher.main()) {
-        repository.getChallenges(dispatcher).collectLatest {
+    private fun getChallenges() = viewModelScope.launch {
+        repository.getChallenges().collectLatest {
             when(it) {
                 ResultState.Empty -> {}
                 is ResultState.Error -> _challengesState.value = ResultState.Error(it.error, it.data)

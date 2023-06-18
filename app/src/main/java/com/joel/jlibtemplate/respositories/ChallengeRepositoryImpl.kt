@@ -2,11 +2,10 @@ package com.joel.jlibtemplate.respositories
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
-import com.joel.communication.client.Client
-import com.joel.communication.deserializables.responseListFlow
-import com.joel.communication.deserializables.responsePaginated
-import com.joel.communication.dispatchers.CommunicationDispatcher
-import com.joel.communication.states.ResultState
+import com.joel.communication_android.deserializables.responseListFlow
+import com.joel.communication_android.deserializables.responsePaginated
+import com.joel.communication_android.states.ResultState
+import com.joel.communication_core.client.Client
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.room.daos.ChallengeDao
 import kotlinx.coroutines.flow.Flow
@@ -16,10 +15,10 @@ class ChallengeRepositoryImpl(
     private val dao: ChallengeDao
 ) : ChallengeRepository {
 
-    override fun getChallenges(dispatcher: CommunicationDispatcher): Flow<ResultState<List<Challenge>>> = client.call {
+    override fun getChallenges(): Flow<ResultState<List<Challenge>>> = client.call {
         path = "api/v1/users/siebenschlaefer/code-challenges/completed"
 
-    }.responseListFlow(dispatcher) {
+    }.responseListFlow {
         onNetworkSuccess {
             dao.replace(it)
         }

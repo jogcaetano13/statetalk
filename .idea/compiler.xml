@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="Communication.app" target="17" />
+      <module name="Communication.buildSrc" target="17" />
+      <module name="Communication.buildSrc.main" target="17" />
+      <module name="Communication.buildSrc.test" target="17" />
+      <module name="Communication.communication-android" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
