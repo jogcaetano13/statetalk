@@ -1,13 +1,11 @@
 package com.joel.communication_android.deserializables
 
-import com.joel.communication_android.dispatchers.CommunicationDispatcher
-import com.joel.communication_android.dispatchers.CommunicationDispatcherImpl
-import com.joel.communication_android.enums.ErrorResponseType
-import com.joel.communication_android.extensions.apiCall
+import com.joel.communication_android.extensions.toError
 import com.joel.communication_android.extensions.toJsonObject
-import com.joel.communication_android.request.CommunicationRequest
 import com.joel.communication_android.states.AsyncState
-import kotlinx.coroutines.withContext
+import com.joel.communication_core.enums.ErrorResponseType
+import com.joel.communication_core.request.CommunicationRequest
+import com.joel.communication_core.response.ErrorResponse
 import org.json.JSONObject
 
 /**
@@ -20,18 +18,17 @@ import org.json.JSONObject
  *
  * @return [AsyncState]
  */
-suspend fun CommunicationRequest.responseJsonObject(
-    dispatcher: CommunicationDispatcher = CommunicationDispatcherImpl
-) : AsyncState<JSONObject> = when(val call = apiCall(dispatcher)) {
-    AsyncState.Empty -> throw IllegalStateException("Empty not used!")
-    is AsyncState.Error -> AsyncState.Error(call.error)
-    is AsyncState.Success -> {
-        val json = call.data.body?.string()?.toJsonObject()
+suspend fun CommunicationRequest.responseJsonObject() : AsyncState<JSONObject> {
+    val callResponse = response()
 
-        withContext(dispatcher.main()) {
-            json?.let {
-                AsyncState.Success(it)
-            } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.EMPTY))
-        }
+    return if (callResponse.isSuccess) {
+        val json = callResponse.body?.string()?.toJsonObject()
+
+        json?.let {
+            AsyncState.Success(it)
+        } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.Empty))
+
+    } else {
+        AsyncState.Error(callResponse.toError())
     }
 }

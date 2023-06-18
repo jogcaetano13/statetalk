@@ -1,6 +1,7 @@
 package com.joel.communication_android.deserializables
 
 import com.joel.communication_android.builders.ResponseBuilder
+import com.joel.communication_android.extensions.toEnvelopeList
 import com.joel.communication_android.extensions.toError
 import com.joel.communication_android.extensions.toList
 import com.joel.communication_android.extensions.toModel
@@ -41,6 +42,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 
 /**
  * Deserialize the request into a [Flow] wrapped by the data json object.
+ * The list wrapped in json object response should be called "data".
  *
  * This method receives a [ResponseBuilder] as parameter to customize the response.
  *
@@ -56,7 +58,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 }
 
 /**
- * Deserialize the request into a [Flow] list wrapped by the data json object.
+ * Deserialize the request into a [Flow] list.
  *
  * This method receives a [ResponseBuilder] as parameter to customize the response.
  *
@@ -68,6 +70,22 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
     return toFlow(
         responseBuilder = responseBuilder,
         deserializeBlock = { it.toList(builder.dateFormat) }
+    )
+}
+
+/**
+ * Deserialize the request into a [Flow] list wrapped by the data json object.
+ *
+ * This method receives a [ResponseBuilder] as parameter to customize the response.
+ *
+ * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
+ */
+inline fun <reified T : Any> CommunicationRequest.responseWrappedListFlow(
+    crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
+): Flow<ResultState<List<T>>> {
+    return toFlow(
+        responseBuilder = responseBuilder,
+        deserializeBlock = { it.toEnvelopeList<T>(builder.dateFormat).data }
     )
 }
 

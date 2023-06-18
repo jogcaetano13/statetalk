@@ -31,6 +31,11 @@ internal inline fun <reified T> CommunicationResponse.toEnvelopeList(datePattern
     return createGson(datePattern).fromJson(body?.string(), type)
 }
 
+internal fun <T> T.toJson(datePattern: String): String {
+    val type = object : TypeToken<T>() {}.type
+    return createGson(datePattern).toJson(this, type)
+}
+
 @PublishedApi
 internal fun createGson(datePattern: String): Gson = GsonBuilder()
     .setDateFormat(datePattern)
