@@ -36,7 +36,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
 ): Flow<ResultState<T>> {
     return toFlow(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toModel<T>(builder.dateFormat) }
+        deserializeBlock = { it.toModel<T>(immutableRequestBuilder.dateFormat) }
     )
 }
 
@@ -53,7 +53,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
 ): Flow<ResultState<T>> {
     return toFlow(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toModelWrapped<T>(builder.dateFormat) }
+        deserializeBlock = { it.toModelWrapped<T>(immutableRequestBuilder.dateFormat) }
     )
 }
 
@@ -69,7 +69,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
 ): Flow<ResultState<List<T>>> {
     return toFlow(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toList(builder.dateFormat) }
+        deserializeBlock = { it.toList(immutableRequestBuilder.dateFormat) }
     )
 }
 
@@ -85,7 +85,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedListFlow(
 ): Flow<ResultState<List<T>>> {
     return toFlow(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toEnvelopeList<T>(builder.dateFormat).data }
+        deserializeBlock = { it.toEnvelopeList<T>(immutableRequestBuilder.dateFormat).data }
     )
 }
 
@@ -118,7 +118,7 @@ internal inline fun <reified T : Any> CommunicationRequest.toFlow(
 
     trySend(ResultState.Loading(localCall))
 
-    builder.preCall?.invoke()
+    immutableRequestBuilder.preCall?.invoke()
 
     try {
         val callResponse = response()

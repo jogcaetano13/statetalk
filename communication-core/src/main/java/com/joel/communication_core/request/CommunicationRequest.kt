@@ -5,6 +5,7 @@ import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.HttpMethod
 import com.joel.communication_core.extensions.apiError
 import com.joel.communication_core.extensions.toHttpMethod
+import com.joel.communication_core.extensions.urlWithPath
 import com.joel.communication_core.response.CommunicationResponse
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -16,10 +17,28 @@ import java.net.URI
 class CommunicationRequest internal constructor(
     @PublishedApi
     internal val requestBuilder: Request.Builder,
-    val builder: ImmutableRequestBuilder,
     @PublishedApi
-    internal val client: OkHttpClient
+    internal val builder: RequestBuilder,
+    @PublishedApi
+    internal val client: OkHttpClient,
+    @PublishedApi
+    internal val baseUrl: String
 ) {
+    val immutableRequestBuilder = ImmutableRequestBuilder(
+        preCall = builder.preCall,
+        headers = builder.headers,
+        dateFormat = builder.dateFormat,
+        builder = builder
+    )
+
+    fun updateUrl() {
+        urlWithPath(
+            baseUrl,
+            builder.path,
+            builder.method,
+            builder.parameters
+        )
+    }
 
     internal val request
         get() = requestBuilder.build()

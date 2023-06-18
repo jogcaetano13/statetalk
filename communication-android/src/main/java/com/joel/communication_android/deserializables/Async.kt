@@ -27,7 +27,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
 ): AsyncState<T> {
     return toAsync(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toModel<T>(builder.dateFormat) }
+        deserializeBlock = { it.toModel<T>(immutableRequestBuilder.dateFormat) }
     )
 }
 
@@ -46,7 +46,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
 ): AsyncState<List<T>> {
     return toAsync(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toList(builder.dateFormat) }
+        deserializeBlock = { it.toList(immutableRequestBuilder.dateFormat) }
     )
 }
 
@@ -66,7 +66,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseWrappedListAsy
 ): AsyncState<List<T>> {
     return toAsync(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toEnvelopeList<T>(builder.dateFormat).data }
+        deserializeBlock = { it.toEnvelopeList<T>(immutableRequestBuilder.dateFormat).data }
     )
 }
 
@@ -86,7 +86,7 @@ suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
 ): AsyncState<T> {
     return toAsync(
         responseBuilder = responseBuilder,
-        deserializeBlock = { it.toModelWrapped<T>(builder.dateFormat) }
+        deserializeBlock = { it.toModelWrapped<T>(immutableRequestBuilder.dateFormat) }
     )
 }
 
@@ -97,7 +97,7 @@ internal suspend inline fun <reified T: Any> CommunicationRequest.toAsync(
 ): AsyncState<T> {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
-    builder.preCall?.invoke()
+    immutableRequestBuilder.preCall?.invoke()
 
     val callResponse = response()
 

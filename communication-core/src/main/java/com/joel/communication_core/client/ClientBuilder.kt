@@ -98,7 +98,7 @@ class ClientBuilder internal constructor() {
 
     internal fun build(): Client {
         val client = createClient()
-        return ClientImpl(client)
+        return ClientImpl(client, baseUrl)
     }
 
     private fun hasHeader(key: HttpHeader) = headers.find { it.first == key } != null

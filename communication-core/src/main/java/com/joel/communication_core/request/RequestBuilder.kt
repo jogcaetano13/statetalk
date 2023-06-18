@@ -53,8 +53,7 @@ class RequestBuilder internal constructor() {
         this.preCall = call
     }
 
-    @PublishedApi
-    internal fun updateParameter(key: String, value: Any): Parameter {
+    fun updateParameter(key: String, value: Any): Parameter {
         val existParameter = parameterByKey(key)
 
         if (existParameter == null)

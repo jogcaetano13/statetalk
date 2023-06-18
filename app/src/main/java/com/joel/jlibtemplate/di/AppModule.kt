@@ -2,17 +2,14 @@ package com.joel.jlibtemplate.di
 
 import android.content.Context
 import androidx.room.Room
-import com.joel.communication_android.builders.ClientBuilder
-import com.joel.communication_android.client.Client
-import com.joel.communication_android.dispatchers.CommunicationDispatcher
-import com.joel.communication_android.extensions.communicationClient
+import com.joel.communication_core.client.Client
+import com.joel.communication_core.client.ClientBuilder
+import com.joel.communication_core.extensions.communicationClient
 import com.joel.jlibtemplate.MainViewModel
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import com.joel.jlibtemplate.respositories.ChallengeRepositoryImpl
 import com.joel.jlibtemplate.room.AppDatabase
 import com.joel.jlibtemplate.room.daos.ChallengeDao
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -41,19 +38,6 @@ fun databaseModule() = module {
     single { provideMoviesDao(get()) }
 }
 
-fun communicationDispatcher() = module {
-    fun provideCommunicationDispatcher() = object : CommunicationDispatcher {
-        override fun main(): CoroutineDispatcher = Dispatchers.Main
-
-        override fun io(): CoroutineDispatcher = Dispatchers.IO
-
-        override fun default(): CoroutineDispatcher = Dispatchers.Default
-
-    }
-
-    single<CommunicationDispatcher> { provideCommunicationDispatcher() }
-}
-
 fun viewModelModule() = module {
-    viewModel { MainViewModel(get(), get()) }
+    viewModel { MainViewModel(get()) }
 }
