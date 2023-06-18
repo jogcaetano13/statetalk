@@ -2,8 +2,8 @@ package com.joel.jlibtemplate.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.joel.communication.models.PagingModel
-import java.util.*
+import com.joel.communication_android.models.PagingModel
+import java.util.Date
 
 @Entity(tableName = "challenges")
 data class Challenge(

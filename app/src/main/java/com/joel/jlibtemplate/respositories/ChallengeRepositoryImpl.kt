@@ -2,11 +2,11 @@ package com.joel.jlibtemplate.respositories
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
-import com.joel.communication.client.Client
-import com.joel.communication.deserializables.responseListFlow
-import com.joel.communication.deserializables.responsePaginated
-import com.joel.communication.dispatchers.CommunicationDispatcher
-import com.joel.communication.states.ResultState
+import com.joel.communication_android.client.Client
+import com.joel.communication_android.deserializables.responseListFlow
+import com.joel.communication_android.deserializables.responsePaginated
+import com.joel.communication_android.dispatchers.CommunicationDispatcher
+import com.joel.communication_android.states.ResultState
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.room.daos.ChallengeDao
 import kotlinx.coroutines.flow.Flow

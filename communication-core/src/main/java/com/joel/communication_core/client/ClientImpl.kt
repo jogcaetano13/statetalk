@@ -4,6 +4,7 @@ import com.joel.communication_core.extensions.toJson
 import com.joel.communication_core.extensions.toName
 import com.joel.communication_core.extensions.urlWithPath
 import com.joel.communication_core.request.CommunicationRequest
+import com.joel.communication_core.request.ImmutableRequestBuilder
 import com.joel.communication_core.request.RequestBuilder
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -45,7 +46,12 @@ internal class ClientImpl internal constructor(
         }
 
         requestBuilder.method(method, callBuilder.body)
+        val immutableRequestBuilder = ImmutableRequestBuilder(
+            preCall = callBuilder.preCall,
+            headers = callBuilder.headers,
+            dateFormat = callBuilder.dateFormat
+        )
 
-        return CommunicationRequest(requestBuilder, callBuilder, client)
+        return CommunicationRequest(requestBuilder, immutableRequestBuilder, client)
     }
 }

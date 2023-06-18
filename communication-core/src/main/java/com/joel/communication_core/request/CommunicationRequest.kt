@@ -16,8 +16,7 @@ import java.net.URI
 class CommunicationRequest internal constructor(
     @PublishedApi
     internal val requestBuilder: Request.Builder,
-    @PublishedApi
-    internal val builder: RequestBuilder,
+    val builder: ImmutableRequestBuilder,
     @PublishedApi
     internal val client: OkHttpClient
 ) {

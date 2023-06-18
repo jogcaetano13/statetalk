@@ -10,5 +10,5 @@ class CommunicationResponse internal constructor(
     val errorBody: String?
 ) {
     val isSuccess: Boolean
-        get() = code in (200..299)
+        get() = code in (200..299) && body != null
 }

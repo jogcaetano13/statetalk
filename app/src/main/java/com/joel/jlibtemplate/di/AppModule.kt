@@ -2,10 +2,10 @@ package com.joel.jlibtemplate.di
 
 import android.content.Context
 import androidx.room.Room
-import com.joel.communication.builders.ClientBuilder
-import com.joel.communication.client.Client
-import com.joel.communication.dispatchers.CommunicationDispatcher
-import com.joel.communication.extensions.communicationClient
+import com.joel.communication_android.builders.ClientBuilder
+import com.joel.communication_android.client.Client
+import com.joel.communication_android.dispatchers.CommunicationDispatcher
+import com.joel.communication_android.extensions.communicationClient
 import com.joel.jlibtemplate.MainViewModel
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import com.joel.jlibtemplate.respositories.ChallengeRepositoryImpl

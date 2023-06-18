@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.joel.communication.dispatchers.CommunicationDispatcher
-import com.joel.communication.states.ResultState
+import com.joel.communication_android.dispatchers.CommunicationDispatcher
+import com.joel.communication_android.states.ResultState
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
