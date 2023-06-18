@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 rootProject.name = "Communication"
 include(":app")
 include(":communication")
+include(":communication-core")
