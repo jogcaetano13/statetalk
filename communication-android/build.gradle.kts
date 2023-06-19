@@ -10,7 +10,6 @@ android {
 
     defaultConfig {
         minSdk = Config.MIN_SDK
-        targetSdk = Config.TARGET_SDK
         version = Publish.LIBRARY_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -27,6 +26,14 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    namespace = "com.joel.communication_android"
 }
 
 tasks {
@@ -51,82 +58,20 @@ publishing {
             groupId = Publish.GROUP_ID
             artifactId = Publish.ARTIFACT_ID
             version = Publish.LIBRARY_VERSION
-            //artifact(mavenArtifactPath)
 
             afterEvaluate {
                 from(components["release"])
             }
-
-//                artifact(tasks.getByName("javadocJar"))
-//                artifact(tasks.getByName("sourcesJar"))
-
-//            pom {
-//                withXml {
-//                    // add dependencies to pom
-//                    val dependencies = asNode().appendNode("dependencies")
-//                    configurations.api.get().dependencies.forEach {
-//                        if (it.group != null &&
-//                            "unspecified" != it.name &&
-//                            it.version != null) {
-//
-//                            val dependencyNode = dependencies.appendNode("dependency")
-//                            dependencyNode.appendNode("groupId", it.group)
-//                            dependencyNode.appendNode("artifactId", it.name)
-//                            dependencyNode.appendNode("version", it.version)
-//                        }
-//                    }
-//                }
-//            }
         }
     }
-
-//    repositories {
-//        maven {
-//            name = GitHub.NAME
-//            url = uri(GitHub.URL)
-//        }
-//
-//        val mavenArtifactPath = "$buildDir/outputs/aar/${Publish.ARTIFACT_ID}-release.aar"
-//
-//        publications {
-//            register<MavenPublication>("gprRelease") {
-//                groupId = Publish.GROUP_ID
-//                artifactId = Publish.ARTIFACT_ID
-//                version = Publish.LIBRARY_VERSION
-//                //artifact(mavenArtifactPath)
-//                from(components["java"])
-//
-//                artifact(tasks.getByName("javadocJar"))
-//                artifact(tasks.getByName("sourcesJar"))
-//
-//                pom {
-//                    withXml {
-//                        // add dependencies to pom
-//                        val dependencies = asNode().appendNode("dependencies")
-//                        configurations.api.get().dependencies.forEach {
-//                            if (it.group != null &&
-//                                "unspecified" != it.name &&
-//                                it.version != null) {
-//
-//                                val dependencyNode = dependencies.appendNode("dependency")
-//                                dependencyNode.appendNode("groupId", it.group)
-//                                dependencyNode.appendNode("artifactId", it.name)
-//                                dependencyNode.appendNode("version", it.version)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.8.0")
+    implementation("androidx.core:core-ktx:1.10.1")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
     implementation(project(":communication-core"))
 
@@ -136,12 +81,12 @@ dependencies {
 
     // Live data
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
     // Paging
     api("androidx.paging:paging-runtime-ktx:3.1.1")
     api("androidx.paging:paging-common-ktx:3.1.1")
-    api("androidx.room:room-paging:2.4.3")
+    api("androidx.room:room-paging:2.5.1")
 
     testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.2")
     testImplementation("org.json:json:20200518")
