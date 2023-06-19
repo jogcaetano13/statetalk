@@ -3,11 +3,13 @@ package com.joel.communication_core.client
 import com.joel.communication_core.alias.Header
 import com.joel.communication_core.alias.Headers
 import com.joel.communication_core.annotations.CommunicationsMarker
+import com.joel.communication_core.cache.CacheBuilder
 import com.joel.communication_core.client.interceptors.CustomHeaderInterceptor
 import com.joel.communication_core.client.interceptors.LoggingInterceptor
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.LogLevel
 import com.joel.communication_core.exceptions.CommunicationsException
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.security.KeyStore
@@ -23,6 +25,7 @@ class ClientBuilder internal constructor() {
     private val headers: Headers = mutableListOf()
     private val timeoutBuilder = TimeoutBuilder()
     private val interceptors = mutableListOf<Interceptor>()
+    private var cacheBuilder: CacheBuilder? = null
 
     init {
         val defaultHeaders = listOf(
@@ -96,14 +99,19 @@ class ClientBuilder internal constructor() {
         this.interceptors.add(interceptor)
     }
 
+    fun cache(builder: CacheBuilder. () -> Unit) {
+        this.cacheBuilder = CacheBuilder().also(builder)
+    }
+
     internal fun build(): Client {
-        val client = createClient()
+        val cache = cacheBuilder?.build()
+        val client = createClient(cache)
         return ClientImpl(client, baseUrl)
     }
 
     private fun hasHeader(key: HttpHeader) = headers.find { it.first == key } != null
 
-    private fun createClient(): OkHttpClient {
+    private fun createClient(cache: Cache?): OkHttpClient {
         val trustManagerFactory: TrustManagerFactory =
             TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
         trustManagerFactory.init(null as KeyStore?)
@@ -115,11 +123,16 @@ class ClientBuilder internal constructor() {
         val sslContext: SSLContext = SSLContext.getInstance("SSL")
         sslContext.init(null, arrayOf<TrustManager>(trustManager), null)
         val sslSocketFactory: SSLSocketFactory = sslContext.socketFactory
-        return OkHttpClient.Builder()
+        val builder = OkHttpClient.Builder()
             .sslSocketFactory(sslSocketFactory, trustManager)
             .addDefaultInterceptor()
             .addInterceptor(CustomHeaderInterceptor(headers))
-            .build()
+
+        cache?.let {
+            builder.cache(it)
+        }
+
+        return builder.build()
     }
 
     private fun OkHttpClient.Builder.addDefaultInterceptor(): OkHttpClient.Builder {
