@@ -15,8 +15,8 @@ internal class ClientImpl internal constructor(
 
     private fun request(builder: RequestBuilder. () -> Unit = {}): CommunicationRequest {
         val callBuilder = RequestBuilder(client, baseUrl).also(builder)
-        val request = callBuilder.build()
+        val requestBuilder = callBuilder.build()
 
-        return CommunicationRequest(request, callBuilder, client, baseUrl)
+        return CommunicationRequest(requestBuilder, callBuilder, client, baseUrl)
     }
 }

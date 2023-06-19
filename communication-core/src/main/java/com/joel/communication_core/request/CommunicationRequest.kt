@@ -5,7 +5,7 @@ import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.HttpMethod
 import com.joel.communication_core.extensions.apiError
 import com.joel.communication_core.extensions.toHttpMethod
-import com.joel.communication_core.extensions.urlWithPath
+import com.joel.communication_core.extensions.updateUrl
 import com.joel.communication_core.response.CommunicationResponse
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import java.net.URI
 
 class CommunicationRequest internal constructor(
     @PublishedApi
-    internal val okhttpRequest: Request,
+    internal val requestBuilder: Request.Builder,
     @PublishedApi
     internal val builder: RequestBuilder,
     @PublishedApi
@@ -32,28 +32,23 @@ class CommunicationRequest internal constructor(
     )
 
     fun updateUrl() {
-        urlWithPath(
-            baseUrl,
-            builder.path,
-            builder.method,
-            builder.parameters
-        )
+        requestBuilder.updateUrl(baseUrl, builder)
     }
 
     internal val request
-        get() = okhttpRequest
+        get() = requestBuilder.build()
 
     val url: URI
-        get() = okhttpRequest.url.toUri()
+        get() = request.url.toUri()
 
     val isHttps: Boolean
-        get() = okhttpRequest.isHttps
+        get() = request.isHttps
 
     val method: HttpMethod
-        get() = okhttpRequest.method.toHttpMethod()
+        get() = request .method.toHttpMethod()
 
     val headers: List<Pair<HttpHeader, String>>
-        get() = okhttpRequest.headers.map {
+        get() = request.headers.map {
             Header(HttpHeader.custom(it.first), it.second)
         }
 

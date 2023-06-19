@@ -185,7 +185,7 @@ class RequestBuilder internal constructor(
         this.body = MultipartBody.Builder().also(block).build()
     }
 
-    internal fun build(): Request {
+    internal fun build(): Request.Builder {
         val requestBuilder = Request.Builder()
             .url(
                 urlWithPath(
@@ -217,7 +217,7 @@ class RequestBuilder internal constructor(
         }
 
         requestBuilder.method(method, body)
-        return requestBuilder.build()
+        return requestBuilder
     }
 
     private fun parameterByKey(key: String) = parameters.find { it.first == key }
