@@ -1,6 +1,6 @@
 package com.joel.communication_core.request
 
-import com.joel.communication_core.alias.Headers
+import com.joel.communication_core.alias.Header
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.HttpMethod
 import com.joel.communication_core.extensions.apiError
@@ -16,13 +16,14 @@ import java.net.URI
 
 class CommunicationRequest internal constructor(
     @PublishedApi
-    internal val requestBuilder: Request.Builder,
+    internal val okhttpRequest: Request,
     @PublishedApi
     internal val builder: RequestBuilder,
     @PublishedApi
     internal val client: OkHttpClient,
     @PublishedApi
-    internal val baseUrl: String
+    internal val baseUrl: String,
+    private val requestHeaders: okhttp3.Headers
 ) {
     val immutableRequestBuilder = ImmutableRequestBuilder(
         preCall = builder.preCall,
@@ -41,22 +42,21 @@ class CommunicationRequest internal constructor(
     }
 
     internal val request
-        get() = requestBuilder.build()
+        get() = okhttpRequest
 
     val url: URI
-        get() = request.url.toUri()
+        get() = okhttpRequest.url.toUri()
 
     val isHttps: Boolean
-        get() = request.isHttps
+        get() = okhttpRequest.isHttps
 
     val method: HttpMethod
-        get() = request.method.toHttpMethod()
+        get() = okhttpRequest.method.toHttpMethod()
 
-    val headers: Headers
-        get() = request.headers.map { requestHeader ->
-            val first = HttpHeader.find(requestHeader.first)!!
-            Pair(first, requestHeader.second)
-        }.toMutableList()
+    val headers: List<Pair<HttpHeader, String>>
+        get() = requestHeaders.map {
+            Header(HttpHeader.custom(it.first), it.second)
+        }
 
     suspend fun response(): CommunicationResponse {
         return try {

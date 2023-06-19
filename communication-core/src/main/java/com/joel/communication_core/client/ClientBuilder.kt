@@ -63,7 +63,7 @@ class ClientBuilder internal constructor() {
      * If you already sent the language, this will be ignored.
      */
     fun language(languageCode: String) {
-        if (languageCode.length > 2 || languageCode.length < 2)
+        if (languageCode.length != 2)
             throw CommunicationsException("Language code must contains only 2 characters")
 
         if (hasHeader(HttpHeader.ACCEPT_LANGUAGE).not()) {
@@ -92,7 +92,7 @@ class ClientBuilder internal constructor() {
     /**
      * Add a new Interceptor to http
      */
-    fun addInterceptor(interceptor: Interceptor) {
+    fun interceptor(interceptor: Interceptor) {
         this.interceptors.add(interceptor)
     }
 

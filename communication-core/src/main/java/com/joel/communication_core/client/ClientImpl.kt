@@ -1,5 +1,6 @@
 package com.joel.communication_core.client
 
+import com.joel.communication_core.client.interceptors.CustomHeaderInterceptor
 import com.joel.communication_core.extensions.toJson
 import com.joel.communication_core.extensions.toName
 import com.joel.communication_core.extensions.urlWithPath
@@ -35,6 +36,14 @@ internal class ClientImpl internal constructor(
             requestBuilder.addHeader(it.first.header, it.second)
         }
 
+        val headerInterceptor = client.interceptors.find { it is CustomHeaderInterceptor }
+
+        (headerInterceptor as? CustomHeaderInterceptor)?.let {
+            it.getHeaders().forEach {
+                requestBuilder.addHeader(it.first.header, it.second)
+            }
+        }
+
         val method = callBuilder.method.toName()
 
         if (HttpMethod.requiresRequestBody(method) && callBuilder.body == null) {
@@ -45,7 +54,9 @@ internal class ClientImpl internal constructor(
         }
 
         requestBuilder.method(method, callBuilder.body)
+        val request = requestBuilder.build()
+        val headers = request.headers
 
-        return CommunicationRequest(requestBuilder, callBuilder, client, baseUrl)
+        return CommunicationRequest(request, callBuilder, client, baseUrl, headers)
     }
 }

@@ -1,6 +1,8 @@
 package com.joel.jlibtemplate
 
 import android.app.Application
+import com.joel.communication_core.alias.Header
+import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.LogLevel
 import com.joel.jlibtemplate.di.clientModule
 import com.joel.jlibtemplate.di.databaseModule
@@ -20,6 +22,8 @@ class Application : Application() {
                 clientModule {
                     baseUrl = BASE_URL
                     logLevel = LogLevel.Body
+
+                    header(Header(HttpHeader.custom("custom-header"), "This is a custom header"))
                 },
                 databaseModule(),
                 repositoriesModule(),
