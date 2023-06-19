@@ -1,11 +1,11 @@
 package com.joel.communication_core.request
 
-import com.joel.communication_core.alias.Headers
+import com.joel.communication_core.alias.Header
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.HttpMethod
 import com.joel.communication_core.extensions.apiError
 import com.joel.communication_core.extensions.toHttpMethod
-import com.joel.communication_core.extensions.urlWithPath
+import com.joel.communication_core.extensions.updateUrl
 import com.joel.communication_core.response.CommunicationResponse
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ class CommunicationRequest internal constructor(
     @PublishedApi
     internal val client: OkHttpClient,
     @PublishedApi
-    internal val baseUrl: String
+    internal val baseUrl: String,
 ) {
     val immutableRequestBuilder = ImmutableRequestBuilder(
         preCall = builder.preCall,
@@ -32,12 +32,7 @@ class CommunicationRequest internal constructor(
     )
 
     fun updateUrl() {
-        urlWithPath(
-            baseUrl,
-            builder.path,
-            builder.method,
-            builder.parameters
-        )
+        requestBuilder.updateUrl(baseUrl, builder)
     }
 
     internal val request
@@ -50,13 +45,12 @@ class CommunicationRequest internal constructor(
         get() = request.isHttps
 
     val method: HttpMethod
-        get() = request.method.toHttpMethod()
+        get() = request .method.toHttpMethod()
 
-    val headers: Headers
-        get() = request.headers.map { requestHeader ->
-            val first = HttpHeader.find(requestHeader.first)!!
-            Pair(first, requestHeader.second)
-        }.toMutableList()
+    val headers: List<Pair<HttpHeader, String>>
+        get() = request.headers.map {
+            Header(HttpHeader.custom(it.first), it.second)
+        }
 
     suspend fun response(): CommunicationResponse {
         return try {

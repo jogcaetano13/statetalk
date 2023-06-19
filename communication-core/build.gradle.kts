@@ -6,8 +6,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -37,64 +37,6 @@ publishing {
             version = Publish.LIBRARY_VERSION
             //artifact(mavenArtifactPath)
             from(components["java"])
-
-            //artifact(tasks.getByName("javadocJar"))
-
-//            pom {
-//                withXml {
-//                    // add dependencies to pom
-//                    val dependencies = asNode().appendNode("dependencies")
-//                    configurations.api.get().dependencies.forEach {
-//                        if (it.group != null &&
-//                            "unspecified" != it.name &&
-//                            it.version != null) {
-//
-//                            val dependencyNode = dependencies.appendNode("dependency")
-//                            dependencyNode.appendNode("groupId", it.group)
-//                            dependencyNode.appendNode("artifactId", it.name)
-//                            dependencyNode.appendNode("version", it.version)
-//                        }
-//                    }
-//                }
-//            }
         }
     }
-
-//    repositories {
-//        maven {
-//            name = GitHub.NAME
-//            url = uri(GitHub.URL)
-//        }
-//
-//        val mavenArtifactPath = "$buildDir/libs/${Publish.ARTIFACT_CORE_ID}-${Publish.LIBRARY_VERSION}.jar"
-//
-//        publications {
-//            register<MavenPublication>("gprRelease") {
-//                groupId = Publish.GROUP_ID
-//                artifactId = Publish.ARTIFACT_CORE_ID
-//                version = Publish.LIBRARY_VERSION
-//                artifact(mavenArtifactPath)
-//
-//                artifact(tasks.getByName("javadocJar"))
-//
-//                pom {
-//                    withXml {
-//                        // add dependencies to pom
-//                        val dependencies = asNode().appendNode("dependencies")
-//                        configurations.api.get().dependencies.forEach {
-//                            if (it.group != null &&
-//                                "unspecified" != it.name &&
-//                                it.version != null) {
-//
-//                                val dependencyNode = dependencies.appendNode("dependency")
-//                                dependencyNode.appendNode("groupId", it.group)
-//                                dependencyNode.appendNode("artifactId", it.name)
-//                                dependencyNode.appendNode("version", it.version)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 }

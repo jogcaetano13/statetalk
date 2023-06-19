@@ -18,4 +18,6 @@ internal class CustomHeaderInterceptor(
 
         return chain.proceed(authenticateRequest.build())
     }
+
+    internal fun getHeaders() = headers.toList()
 }

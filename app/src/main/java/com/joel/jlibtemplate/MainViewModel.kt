@@ -29,7 +29,7 @@ class MainViewModel(
     }
 
     private fun getChallengesPaginated() = viewModelScope.launch {
-        repository.getChallengesPaginated().cachedIn(viewModelScope).collectLatest {
+        repository.getChallengesPaginatedOnlyApi().cachedIn(viewModelScope).collectLatest {
             _pagingState.value = it
         }
     }
