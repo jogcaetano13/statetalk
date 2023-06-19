@@ -1,7 +1,7 @@
 # Communication Android
 ## Lightweight network library written in Kotlin
 
-[![](https://jitpack.io/v/jogcaetano13/communication_android.svg)](https://jitpack.io/#jogcaetano13/communication_android)
+[![](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/communication)
 
 ## Features
 
@@ -31,7 +31,11 @@ Install the dependencies via ```build.gradle``` (app module).
 ```kotlin
 dependencies {
     //...
-    implementation("com.github.jogcaetano13:communication_android:<latest_version>")
+    // This is mandatory
+    implementation("com.github.jogcaetano13:communication:communication-core:<latest_version>")
+    
+    // This dependency is optional, only if you want to make requests for paging, livedata or flow
+    implementation("com.github.jogcaetano13:communication:communication-android:<latest_version>")
 }
 ```
 
@@ -52,13 +56,31 @@ val client = communicationClient {
 
 To make a request, you only need to invoke the call function in the Client instance.
 
-##### Flow
+##### Normal response
+
+````kotlin
+val response: ComunicationResponse = client.call {
+    path = PATH
+    
+}.response()
+````
+
+You also can call and deserialize to a specific object
+
+````kotlin
+val response: Model = client.call {
+    path = PATH
+    
+}.responseToModel<Model>()
+````
+
+##### Flow (Only available in communication-android)
 
 ```kotlin
 val response: Flow<ResultState<Model>> = client.call {
     path = PATH
 
-    parameter(key, value)
+    parameter(key to value)
 
 }.responseFlow()
 ```
@@ -68,7 +90,7 @@ val response: Flow<ResultState<Model>> = client.call {
 ```kotlin
 val response: Flow<ResultState<Model>> = client.call {
     path = PATH
-    method = HttpMethod.POST
+    method = HttpMethod.Post
 
 }.responseFlow {
     onNetworkSuccess { data ->
@@ -81,7 +103,7 @@ val response: Flow<ResultState<Model>> = client.call {
 }
 ```
 
-##### Paging response
+##### Paging response (Only available in communication-android)
 
 You don't need to provide the page, it will be increased automatically when it needs.
 
@@ -149,19 +171,6 @@ lifecycleScope.launch {
         }
     }
 }
-```
-
-## Testing
-
-For testing propose, you must inject ```CommunicationDispatcher``` into the response to override the dispatchers.
-
-```kotlin
-val response: Flow<ResultState<Model>> = client.call {
-    path = PATH
-
-    parameter(key, value)
-
-}.responseFlow(communicationDispatcher)
 ```
 
 ## License

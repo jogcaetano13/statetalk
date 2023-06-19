@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.joel.communication_android.states.ResultState
+import com.joel.communication_core.exceptions.HttpException
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,14 @@ class MainViewModel(
     val challengesState by lazy {
         getChallenges()
         _challengesState.asStateFlow()
+    }
+
+    fun getChallengesSuspend() = viewModelScope.launch {
+        try {
+            val challenges = repository.getChallengesSuspend()
+        } catch (e: HttpException) {
+            print(e)
+        }
     }
 
     private fun getChallengesPaginated() = viewModelScope.launch {

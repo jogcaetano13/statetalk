@@ -12,4 +12,6 @@ interface ChallengeRepository {
     fun getChallengesPaginated(): Flow<PagingData<Challenge>>
 
     fun getChallengesPaginatedOnlyApi(): Flow<PagingData<Challenge>>
+
+    suspend fun getChallengesSuspend(): List<Challenge>
 }

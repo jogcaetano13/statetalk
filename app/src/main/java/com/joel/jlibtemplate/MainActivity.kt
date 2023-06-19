@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        viewModel.getChallengesSuspend()
+
         val adapter = ChallengeAdapter()
         val adapterWithFooter = adapter.withLoadStateFooter(ChallengeLoadStateAdapter())
 

@@ -7,6 +7,7 @@ import com.joel.communication_android.deserializables.responsePaginated
 import com.joel.communication_android.states.ResultState
 import com.joel.communication_core.alias.Header
 import com.joel.communication_core.client.Client
+import com.joel.communication_core.deserializables.responseToModel
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.room.daos.ChallengeDao
@@ -52,4 +53,9 @@ class ChallengeRepositoryImpl(
             onlyApiCall = true
         }
     }
+
+    override suspend fun getChallengesSuspend(): List<Challenge> = client.call {
+        path = "api/v1/users/siebenschlaefer/code-challenges/completed"
+
+    }.responseToModel()
 }
