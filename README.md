@@ -32,10 +32,10 @@ Install the dependencies via ```build.gradle``` (app module).
 dependencies {
     //...
     // This is mandatory
-    implementation("com.github.jogcaetano13:communication:communication-core:<latest_version>")
+    implementation("com.github.jogcaetano13.communication:communication-core:<latest_version>")
     
     // This dependency is optional, only if you want to make requests for paging, livedata or flow
-    implementation("com.github.jogcaetano13:communication:communication-android:<latest_version>")
+    implementation("com.github.jogcaetano13.communication:communication-android:<latest_version>")
 }
 ```
 
