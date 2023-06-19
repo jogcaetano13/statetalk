@@ -6,18 +6,26 @@ import com.joel.communication_core.alias.Headers
 import com.joel.communication_core.alias.Parameter
 import com.joel.communication_core.alias.Parameters
 import com.joel.communication_core.annotations.CommunicationsMarker
+import com.joel.communication_core.client.interceptors.CustomHeaderInterceptor
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.HttpMethod
 import com.joel.communication_core.exceptions.CommunicationsException
 import com.joel.communication_core.extensions.toJson
+import com.joel.communication_core.extensions.toName
+import com.joel.communication_core.extensions.urlWithPath
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.Date
 
 @CommunicationsMarker
-class RequestBuilder internal constructor() {
+class RequestBuilder internal constructor(
+    private val client: OkHttpClient,
+    private val baseUrl: String
+) {
 
     @PublishedApi
     internal var preCall: (() -> Unit)? = null
@@ -175,6 +183,41 @@ class RequestBuilder internal constructor() {
      */
     fun body(block: MultipartBody.Builder.() -> Unit) {
         this.body = MultipartBody.Builder().also(block).build()
+    }
+
+    internal fun build(): Request {
+        val requestBuilder = Request.Builder()
+            .url(
+                urlWithPath(
+                baseUrl,
+                path,
+                method,
+                parameters
+            ))
+
+        headers.forEach {
+            requestBuilder.addHeader(it.first.header, it.second)
+        }
+
+        val headerInterceptor = client.interceptors.find { it is CustomHeaderInterceptor }
+
+        (headerInterceptor as? CustomHeaderInterceptor)?.let {
+            it.getHeaders().forEach {
+                requestBuilder.addHeader(it.first.header, it.second)
+            }
+        }
+
+        val method = method.toName()
+
+        if (okhttp3.internal.http.HttpMethod.requiresRequestBody(method) && body == null) {
+            if (parameters.isEmpty())
+                body = "".toRequestBody()
+            else
+                body = parameters.toJson(dateFormat).toRequestBody("application/json; charset=utf-8".toMediaType())
+        }
+
+        requestBuilder.method(method, body)
+        return requestBuilder.build()
     }
 
     private fun parameterByKey(key: String) = parameters.find { it.first == key }

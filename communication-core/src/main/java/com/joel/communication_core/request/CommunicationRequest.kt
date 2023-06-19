@@ -23,7 +23,6 @@ class CommunicationRequest internal constructor(
     internal val client: OkHttpClient,
     @PublishedApi
     internal val baseUrl: String,
-    private val requestHeaders: okhttp3.Headers
 ) {
     val immutableRequestBuilder = ImmutableRequestBuilder(
         preCall = builder.preCall,
@@ -54,7 +53,7 @@ class CommunicationRequest internal constructor(
         get() = okhttpRequest.method.toHttpMethod()
 
     val headers: List<Pair<HttpHeader, String>>
-        get() = requestHeaders.map {
+        get() = okhttpRequest.headers.map {
             Header(HttpHeader.custom(it.first), it.second)
         }
 

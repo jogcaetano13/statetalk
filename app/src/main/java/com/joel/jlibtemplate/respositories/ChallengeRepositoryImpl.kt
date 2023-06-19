@@ -1,6 +1,5 @@
 package com.joel.jlibtemplate.respositories
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import com.joel.communication_android.deserializables.responseListFlow
@@ -25,11 +24,6 @@ class ChallengeRepositoryImpl(
             header(Header(HttpHeader.custom("custom_header_request"), "Custom header"))
         }
 
-        val headers = request.headers
-        print(headers)
-
-        Log.d("Paginated header:", "getChallenges: ${request.headers}")
-
         return request.responseListFlow {
 
         }
@@ -53,8 +47,6 @@ class ChallengeRepositoryImpl(
             path = "api/v1/users/siebenschlaefer/code-challenges/completed"
 
         }
-
-        Log.d("Paginated header:", "getChallengesPaginatedOnlyApi: ${request.headers}")
 
         return request.responsePaginated {
             onlyApiCall = true
