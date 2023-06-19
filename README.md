@@ -50,7 +50,7 @@ val client = communicationClient {
     baseUrl = BASE_URL
 }
 ```
-*You can add another customization, like header and parameters.*
+*You can add another customization, like header.*
 
 ### Making a request
 
@@ -65,7 +65,7 @@ val response: ComunicationResponse = client.call {
 }.response()
 ````
 
-You also can call and deserialize to a specific object
+You can also call and deserialize to a specific object
 
 ````kotlin
 val response: Model = client.call {
@@ -114,6 +114,9 @@ val response: Flow<PagingData<Model>> = call {
     parameter(key, value)
 }.responsePaginated {
     onlyApiCall = true
+
+    // You can also change the parameter "page" name
+    pageQueryName = "wherever your page parameter is called"
 
     // These 3 functions are mandatory if 'onlyApiCall' is false
     pagingSource {  }
