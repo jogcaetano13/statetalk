@@ -60,23 +60,23 @@ publishing {
 //                artifact(tasks.getByName("javadocJar"))
 //                artifact(tasks.getByName("sourcesJar"))
 
-            pom {
-                withXml {
-                    // add dependencies to pom
-                    val dependencies = asNode().appendNode("dependencies")
-                    configurations.api.get().dependencies.forEach {
-                        if (it.group != null &&
-                            "unspecified" != it.name &&
-                            it.version != null) {
-
-                            val dependencyNode = dependencies.appendNode("dependency")
-                            dependencyNode.appendNode("groupId", it.group)
-                            dependencyNode.appendNode("artifactId", it.name)
-                            dependencyNode.appendNode("version", it.version)
-                        }
-                    }
-                }
-            }
+//            pom {
+//                withXml {
+//                    // add dependencies to pom
+//                    val dependencies = asNode().appendNode("dependencies")
+//                    configurations.api.get().dependencies.forEach {
+//                        if (it.group != null &&
+//                            "unspecified" != it.name &&
+//                            it.version != null) {
+//
+//                            val dependencyNode = dependencies.appendNode("dependency")
+//                            dependencyNode.appendNode("groupId", it.group)
+//                            dependencyNode.appendNode("artifactId", it.name)
+//                            dependencyNode.appendNode("version", it.version)
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 
