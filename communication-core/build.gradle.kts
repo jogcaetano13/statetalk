@@ -30,42 +30,71 @@ group = Publish.GROUP_ID
 version = Publish.LIBRARY_VERSION
 
 publishing {
+    publications {
+        register<MavenPublication>("gprRelease") {
+            groupId = Publish.GROUP_ID
+            artifactId = Publish.ARTIFACT_CORE_ID
+            version = Publish.LIBRARY_VERSION
+            //artifact(mavenArtifactPath)
+            from(components["java"])
 
-    repositories {
-        maven {
-            name = GitHub.NAME
-            url = uri(GitHub.URL)
-        }
+            //artifact(tasks.getByName("javadocJar"))
 
-        val mavenArtifactPath = "$buildDir/libs/${Publish.ARTIFACT_CORE_ID}-${Publish.LIBRARY_VERSION}.jar"
+            pom {
+                withXml {
+                    // add dependencies to pom
+                    val dependencies = asNode().appendNode("dependencies")
+                    configurations.api.get().dependencies.forEach {
+                        if (it.group != null &&
+                            "unspecified" != it.name &&
+                            it.version != null) {
 
-        publications {
-            register<MavenPublication>("gprRelease") {
-                groupId = Publish.GROUP_ID
-                artifactId = Publish.ARTIFACT_CORE_ID
-                version = Publish.LIBRARY_VERSION
-                artifact(mavenArtifactPath)
-
-                artifact(tasks.getByName("javadocJar"))
-
-                pom {
-                    withXml {
-                        // add dependencies to pom
-                        val dependencies = asNode().appendNode("dependencies")
-                        configurations.api.get().dependencies.forEach {
-                            if (it.group != null &&
-                                "unspecified" != it.name &&
-                                it.version != null) {
-
-                                val dependencyNode = dependencies.appendNode("dependency")
-                                dependencyNode.appendNode("groupId", it.group)
-                                dependencyNode.appendNode("artifactId", it.name)
-                                dependencyNode.appendNode("version", it.version)
-                            }
+                            val dependencyNode = dependencies.appendNode("dependency")
+                            dependencyNode.appendNode("groupId", it.group)
+                            dependencyNode.appendNode("artifactId", it.name)
+                            dependencyNode.appendNode("version", it.version)
                         }
                     }
                 }
             }
         }
     }
+
+//    repositories {
+//        maven {
+//            name = GitHub.NAME
+//            url = uri(GitHub.URL)
+//        }
+//
+//        val mavenArtifactPath = "$buildDir/libs/${Publish.ARTIFACT_CORE_ID}-${Publish.LIBRARY_VERSION}.jar"
+//
+//        publications {
+//            register<MavenPublication>("gprRelease") {
+//                groupId = Publish.GROUP_ID
+//                artifactId = Publish.ARTIFACT_CORE_ID
+//                version = Publish.LIBRARY_VERSION
+//                artifact(mavenArtifactPath)
+//
+//                artifact(tasks.getByName("javadocJar"))
+//
+//                pom {
+//                    withXml {
+//                        // add dependencies to pom
+//                        val dependencies = asNode().appendNode("dependencies")
+//                        configurations.api.get().dependencies.forEach {
+//                            if (it.group != null &&
+//                                "unspecified" != it.name &&
+//                                it.version != null) {
+//
+//                                val dependencyNode = dependencies.appendNode("dependency")
+//                                dependencyNode.appendNode("groupId", it.group)
+//                                dependencyNode.appendNode("artifactId", it.name)
+//                                dependencyNode.appendNode("version", it.version)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
