@@ -25,9 +25,9 @@ class Application : Application() {
 
                     header(Header(HttpHeader.custom("custom-header"), "This is a custom header"))
 
-                    cache {
-                        file = this@Application.externalCacheDir
-                    }
+//                    cache {
+//                        file = this@Application.externalCacheDir
+//                    }
                 },
                 databaseModule(),
                 repositoriesModule(),

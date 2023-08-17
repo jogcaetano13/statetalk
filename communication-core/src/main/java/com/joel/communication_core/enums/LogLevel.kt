@@ -1,5 +1,7 @@
 package com.joel.communication_core.enums
 
+import okhttp3.logging.HttpLoggingInterceptor
+
 sealed interface LogLevel {
     /**
      * No logs.
@@ -59,4 +61,11 @@ sealed interface LogLevel {
      * }</pre>
      */
     object Body : LogLevel
+
+    fun fromLevel(): HttpLoggingInterceptor.Level = when(this) {
+        Basic -> HttpLoggingInterceptor.Level.BASIC
+        Body -> HttpLoggingInterceptor.Level.BODY
+        Headers -> HttpLoggingInterceptor.Level.HEADERS
+        None -> HttpLoggingInterceptor.Level.NONE
+    }
 }

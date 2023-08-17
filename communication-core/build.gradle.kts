@@ -12,6 +12,7 @@ java {
 
 dependencies {
     api("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+    api("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     // Gson

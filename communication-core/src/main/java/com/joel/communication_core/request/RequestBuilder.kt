@@ -33,7 +33,7 @@ class RequestBuilder internal constructor(
     internal val parameters: Parameters = mutableListOf()
     internal val headers: Headers = mutableListOf()
 
-    internal var body: RequestBody? = null
+    private var body: RequestBody? = null
 
     /**
      * The method of the request.
@@ -210,10 +210,10 @@ class RequestBuilder internal constructor(
         val method = method.toName()
 
         if (okhttp3.internal.http.HttpMethod.requiresRequestBody(method) && body == null) {
-            if (parameters.isEmpty())
-                body = "".toRequestBody()
+            body = if (parameters.isEmpty())
+                "".toRequestBody()
             else
-                body = parameters.toJson(dateFormat).toRequestBody("application/json; charset=utf-8".toMediaType())
+                parameters.toJson(dateFormat).toRequestBody("application/json; charset=utf-8".toMediaType())
         }
 
         requestBuilder.method(method, body)

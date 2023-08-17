@@ -5,20 +5,14 @@ import com.joel.communication_core.alias.Headers
 import com.joel.communication_core.annotations.CommunicationsMarker
 import com.joel.communication_core.cache.CacheBuilder
 import com.joel.communication_core.client.interceptors.CustomHeaderInterceptor
-import com.joel.communication_core.client.interceptors.LoggingInterceptor
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.enums.LogLevel
 import com.joel.communication_core.exceptions.CommunicationsException
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import java.security.KeyStore
+import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManager
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
 
 @CommunicationsMarker
 class ClientBuilder internal constructor() {
@@ -112,19 +106,9 @@ class ClientBuilder internal constructor() {
     private fun hasHeader(key: HttpHeader) = headers.find { it.first == key } != null
 
     private fun createClient(cache: Cache?): OkHttpClient {
-        val trustManagerFactory: TrustManagerFactory =
-            TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-        trustManagerFactory.init(null as KeyStore?)
-        val trustManagers: Array<TrustManager> = trustManagerFactory.trustManagers
-        check(!(trustManagers.size != 1 || trustManagers[0] !is X509TrustManager)) {
-            "Unexpected default trust managers:" + trustManagers.contentToString()
-        }
-        val trustManager: X509TrustManager = trustManagers[0] as X509TrustManager
-        val sslContext: SSLContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, arrayOf<TrustManager>(trustManager), null)
-        val sslSocketFactory: SSLSocketFactory = sslContext.socketFactory
         val builder = OkHttpClient.Builder()
-            .sslSocketFactory(sslSocketFactory, trustManager)
+            .followRedirects(false)
+            .retryOnConnectionFailure(true)
             .addDefaultInterceptor()
             .addInterceptor(CustomHeaderInterceptor(headers))
 
@@ -132,12 +116,15 @@ class ClientBuilder internal constructor() {
             builder.cache(it)
         }
 
+        val client = builder.build()
+        print(client)
+
         return builder.build()
     }
 
     private fun OkHttpClient.Builder.addDefaultInterceptor(): OkHttpClient.Builder {
-        val loggingInterceptor = LoggingInterceptor().also {
-            it.level = logLevel
+        val loggingInterceptor = HttpLoggingInterceptor().also {
+            it.level = logLevel.fromLevel()
         }
 
         addInterceptor(loggingInterceptor)
