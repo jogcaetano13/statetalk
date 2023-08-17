@@ -14,12 +14,9 @@ import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_core.response.CommunicationResponse
 import com.joel.communication_core.response.ErrorResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -96,7 +93,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedListFlow(
 internal inline fun <reified T : Any> CommunicationRequest.toFlow(
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit,
     crossinline deserializeBlock: (CommunicationResponse) -> T?
-): Flow<ResultState<T>> = callbackFlow {
+): Flow<ResultState<T>> = channelFlow {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
@@ -113,7 +110,7 @@ internal inline fun <reified T : Any> CommunicationRequest.toFlow(
             send(ResultState.Error(ErrorResponse(404, "Empty", ErrorResponseType.Empty)))
         }
 
-        return@callbackFlow
+        return@channelFlow
     }
 
     send(ResultState.Loading(localCall))
@@ -157,24 +154,14 @@ internal inline fun <reified T : Any> CommunicationRequest.toFlow(
                 ))
         }
 
-        var job: Job? = null
-
         response.offlineBuilder?.call?.let {
             it()?.let {
                 ResultState.Success(it)
             }
-        } ?: run {
-            job = launch {
-                response.offlineBuilder?.callFlow?.invoke()?.collect {
-                    it?.let {
-                        send(ResultState.Success(it))
-                    }
-                }
+        } ?: response.offlineBuilder?.callFlow?.invoke()?.collect {
+            it?.let {
+                send(ResultState.Success(it))
             }
-        }
-
-        awaitClose {
-            job?.cancel()
         }
 
     } catch (e: Exception) {

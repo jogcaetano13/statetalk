@@ -61,9 +61,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
     // Room database
-    implementation("androidx.room:room-runtime:2.5.1")
-    implementation("androidx.room:room-ktx:2.5.1")
-    kapt("androidx.room:room-compiler:2.5.1")
+    implementation("androidx.room:room-runtime:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
+    kapt("androidx.room:room-compiler:2.5.2")
     implementation("android.arch.persistence.room:runtime:1.1.1")
     kapt("android.arch.persistence.room:compiler:1.1.1")
 
@@ -71,7 +71,7 @@ dependencies {
 
     // Unit tests
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("app.cash.turbine:turbine:0.12.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")

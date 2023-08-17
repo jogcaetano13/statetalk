@@ -72,23 +72,22 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
     implementation(project(":communication-core"))
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
     // Live data
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
     // Paging
-    api("androidx.paging:paging-runtime-ktx:3.1.1")
-    api("androidx.paging:paging-common-ktx:3.1.1")
-    api("androidx.room:room-paging:2.5.1")
+    api("androidx.paging:paging-runtime-ktx:3.2.0")
+    api("androidx.paging:paging-common-ktx:3.2.0")
+    api("androidx.room:room-paging:2.5.2")
 
     testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.2")
     testImplementation("org.json:json:20200518")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 }
