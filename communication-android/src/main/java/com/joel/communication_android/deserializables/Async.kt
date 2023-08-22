@@ -11,6 +11,8 @@ import com.joel.communication_core.enums.ErrorResponseType
 import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_core.response.CommunicationResponse
 import com.joel.communication_core.response.ErrorResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Deserialize the request into a [AsyncState].
@@ -106,7 +108,7 @@ internal suspend inline fun <reified T: Any> CommunicationRequest.toAsync(
     return if (callResponse.isSuccess) {
         val result = deserializeBlock(callResponse)
         result?.let {
-            response.onNetworkSuccess?.invoke(it)
+            withContext(Dispatchers.IO) { response.onNetworkSuccess?.invoke(it) }
             AsyncState.Success(it)
         } ?: AsyncState.Error(ErrorResponse(404, "Not found", ErrorResponseType.Empty))
 
