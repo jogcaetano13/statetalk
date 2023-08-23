@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import java.util.Date
 
 @CommunicationsMarker
@@ -183,6 +184,26 @@ class RequestBuilder internal constructor(
      */
     fun body(block: MultipartBody.Builder.() -> Unit) {
         this.body = MultipartBody.Builder().also(block).build()
+    }
+
+    /**
+     * Upload file body with progress
+     *
+     * @param fieldName The name of the backend field
+     * @param file The file to upload
+     * @param contentType The content type of the body
+     * @param onProgress Lambda to track the progress of the upload
+     */
+    fun uploadFileBody(
+        fieldName: String,
+        file: File,
+        contentType: String = "text/plain",
+        onProgress: (Long) -> Unit = {}
+    ) {
+        body {
+            setType(MultipartBody.FORM)
+            addFormDataPart(fieldName, file.name, UploadFileRequestBody(file, contentType, onProgress))
+        }
     }
 
     internal fun build(): Request.Builder {
