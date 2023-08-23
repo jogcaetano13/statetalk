@@ -36,7 +36,7 @@ internal class UploadFileRequestBody(
             while (source.read(sink.buffer, SEGMENT_SIZE.toLong()).also { read = it } != -1L) {
                 total += read
                 sink.flush()
-                onProgress((total / contentLength()) * 100)
+                onProgress(total)
             }
         } finally {
             source?.close()
