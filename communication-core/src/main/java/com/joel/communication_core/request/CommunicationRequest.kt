@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.jetbrains.annotations.VisibleForTesting
 import java.net.URI
 
 class CommunicationRequest internal constructor(
@@ -51,6 +52,17 @@ class CommunicationRequest internal constructor(
         get() = request.headers.map {
             Header(HttpHeader.custom(it.first), it.second)
         }
+
+    companion object {
+
+        @VisibleForTesting
+        fun testRequest() = CommunicationRequest(
+            Request.Builder(),
+            RequestBuilder(OkHttpClient(), "baseUrl"),
+            OkHttpClient(),
+            "baseUrl"
+        )
+    }
 
     suspend fun response(): CommunicationResponse {
         return try {
