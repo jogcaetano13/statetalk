@@ -1,11 +1,11 @@
-package com.joel.communication_android.paging
+package com.joel.communication_paging.sources
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.joel.communication_android.builders.PagingBuilder
 import com.joel.communication_android.envelope.EnvelopeList
-import com.joel.communication_android.models.PagingModel
 import com.joel.communication_android.states.AsyncState
+import com.joel.communication_paging.builders.PagingBuilder
+import com.joel.communication_paging.models.PagingModel
 
 @PublishedApi
 internal class NetworkPagingSource<T : PagingModel>(

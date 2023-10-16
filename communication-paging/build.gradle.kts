@@ -33,7 +33,7 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    namespace = "com.joel.communication_android"
+    namespace = "com.joel.communication_paging"
 }
 
 tasks {
@@ -73,16 +73,14 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     api(project(":communication-core"))
+    api(project(":communication-android"))
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
-    // Live data
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-
-    testImplementation("com.squareup.okhttp3:mockwebserver:5.0.0-alpha.2")
-    testImplementation("org.json:json:20200518")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+    // Paging
+    api("androidx.paging:paging-runtime-ktx:3.2.1")
+    api("androidx.paging:paging-common-ktx:3.2.1")
+    api("androidx.room:room-paging:2.5.2")
 }

@@ -1,9 +1,9 @@
-package com.joel.communication_android.builders
+package com.joel.communication_paging.builders
 
 import androidx.paging.LoadType
 import androidx.paging.PagingSource
-import com.joel.communication_android.models.PagingModel
 import com.joel.communication_core.annotations.CommunicationsMarker
+import com.joel.communication_paging.models.PagingModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 

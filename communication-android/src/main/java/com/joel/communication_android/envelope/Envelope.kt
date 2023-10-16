@@ -1,6 +1,5 @@
 package com.joel.communication_android.envelope
 
-@PublishedApi
-internal data class Envelope<T>(
+data class Envelope<T> internal constructor(
     val data: T?
 )

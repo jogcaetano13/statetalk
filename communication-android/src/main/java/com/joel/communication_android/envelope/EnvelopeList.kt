@@ -2,8 +2,7 @@ package com.joel.communication_android.envelope
 
 import com.google.gson.annotations.SerializedName
 
-@PublishedApi
-internal data class EnvelopeList<T>(
+data class EnvelopeList<T> internal constructor(
     @SerializedName("data")
     val data: List<T>
 )

@@ -1,15 +1,16 @@
-package com.joel.communication_android.deserializables
+package com.joel.communication_paging.deserializables
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.joel.communication_android.builders.PagingBuilder
-import com.joel.communication_android.models.PagingModel
-import com.joel.communication_android.paging.NetworkPagingSource
-import com.joel.communication_android.paging.RemoteAndLocalPagingSource
+import com.joel.communication_android.deserializables.responseAsync
 import com.joel.communication_core.exceptions.CommunicationsException
 import com.joel.communication_core.request.CommunicationRequest
+import com.joel.communication_paging.builders.PagingBuilder
+import com.joel.communication_paging.models.PagingModel
+import com.joel.communication_paging.sources.NetworkPagingSource
+import com.joel.communication_paging.sources.RemoteAndLocalPagingSource
 import kotlinx.coroutines.flow.Flow
 
 @ExperimentalPagingApi

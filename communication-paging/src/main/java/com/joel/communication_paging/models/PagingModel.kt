@@ -1,4 +1,4 @@
-package com.joel.communication_android.models
+package com.joel.communication_paging.models
 
 abstract class PagingModel {
     internal var page: Int = 1
