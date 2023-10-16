@@ -2,10 +2,10 @@ package com.joel.communication_android.deserializables
 
 import com.joel.communication_android.extensions.toError
 import com.joel.communication_android.extensions.toJsonObject
-import com.joel.communication_android.states.AsyncState
 import com.joel.communication_core.enums.ErrorResponseType
 import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_core.response.ErrorResponse
+import com.joel.communication_core.states.AsyncState
 import org.json.JSONObject
 
 /**

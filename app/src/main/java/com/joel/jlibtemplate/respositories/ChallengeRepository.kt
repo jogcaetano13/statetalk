@@ -1,7 +1,7 @@
 package com.joel.jlibtemplate.respositories
 
 import androidx.paging.PagingData
-import com.joel.communication_android.states.ResultState
+import com.joel.communication_core.states.ResultState
 import com.joel.jlibtemplate.models.Challenge
 import kotlinx.coroutines.flow.Flow
 

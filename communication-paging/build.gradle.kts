@@ -56,7 +56,7 @@ publishing {
     publications {
         register<MavenPublication>("gprRelease") {
             groupId = Publish.GROUP_ID
-            artifactId = Publish.ARTIFACT_ID
+            artifactId = Publish.ARTIFACT_PAGING_ID
             version = Publish.LIBRARY_VERSION
 
             afterEvaluate {

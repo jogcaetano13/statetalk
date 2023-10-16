@@ -6,11 +6,11 @@ import com.joel.communication_android.extensions.toError
 import com.joel.communication_android.extensions.toList
 import com.joel.communication_android.extensions.toModel
 import com.joel.communication_android.extensions.toModelWrapped
-import com.joel.communication_android.states.AsyncState
 import com.joel.communication_core.enums.ErrorResponseType
 import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_core.response.CommunicationResponse
 import com.joel.communication_core.response.ErrorResponse
+import com.joel.communication_core.states.AsyncState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

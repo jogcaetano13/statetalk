@@ -3,7 +3,7 @@ package com.joel.jlibtemplate
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.joel.communication_android.dispatchers.CommunicationDispatcher
-import com.joel.communication_android.states.ResultState
+import com.joel.communication_core.states.ResultState
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf

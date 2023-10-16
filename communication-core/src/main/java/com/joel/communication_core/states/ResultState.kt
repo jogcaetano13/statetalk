@@ -1,4 +1,4 @@
-package com.joel.communication_android.states
+package com.joel.communication_core.states
 
 import com.joel.communication_core.response.ErrorResponse
 

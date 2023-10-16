@@ -5,8 +5,8 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.joel.communication_android.envelope.EnvelopeList
-import com.joel.communication_android.states.AsyncState
 import com.joel.communication_core.exceptions.CommunicationsException
+import com.joel.communication_core.states.AsyncState
 import com.joel.communication_paging.builders.PagingBuilder
 import com.joel.communication_paging.models.PagingModel
 

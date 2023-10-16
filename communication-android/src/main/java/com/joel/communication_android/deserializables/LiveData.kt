@@ -3,8 +3,8 @@ package com.joel.communication_android.deserializables
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.joel.communication_android.builders.ResponseBuilder
-import com.joel.communication_android.states.ResultState
 import com.joel.communication_core.request.CommunicationRequest
+import com.joel.communication_core.states.ResultState
 
 /**
  * Deserialize the request into a [LiveData].
