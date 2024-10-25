@@ -106,7 +106,7 @@ val response: Flow<ResultState<Model>> = client.call {
 }
 ```
 
-##### Paging response (Only available in communication-android)
+##### Paging response (Only available in communication-paging)
 
 You don't need to provide the page, it will be increased automatically when it needs.
 
