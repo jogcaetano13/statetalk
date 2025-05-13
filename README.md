@@ -1,18 +1,39 @@
-# Communication Android
-## Lightweight network library written in Kotlin
+# Communication
 
-[![](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/communication)
+[![JitPack](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/communication)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+A lightweight, flexible network library for Android written in Kotlin. The Communication library provides a clean and intuitive API for handling network requests with support for LiveData, Flow, object deserialization, and pagination.
 
-- LiveData responses
-- Flow responses
-- Object deserialization
-- Paging response
+## 🌟 Features
 
-## Installation
+- **Multiple Response Types**
+  - Support for LiveData responses
+  - Support for Flow responses
+  - Direct object deserialization
+  
+- **Android Architecture Components Integration**
+  - Seamless integration with Android ViewModel and LiveData
+  - Coroutines and Flow support for reactive programming
 
-First you need to add the jitpack to ```settings.gradle```
+- **Pagination Support**
+  - Built-in pagination handling with Jetpack Paging 3 library
+  - Customizable page parameters
+
+- **Flexibility**
+  - Customizable headers and parameters
+  - Support for all HTTP methods
+  - Easy to configure base URL
+
+- **Local Data Integration**
+  - Support for caching and local data observation
+  - Callbacks for handling successful network responses
+
+## 📦 Installation
+
+### Step 1: Add JitPack repository
+
+In your root `settings.gradle` file, add the JitPack repository:
 
 ```kotlin
 dependencyResolutionManagement {
@@ -20,165 +41,237 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
         maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-Install the dependencies via ```build.gradle``` (app module).
+### Step 2: Add the dependencies
+
+In your app module's `build.gradle` file:
 
 ```kotlin
 dependencies {
-    //...
-    // This is mandatory
-    implementation("com.github.jogcaetano13.communication:communication-core:<latest_version>")
+    // Core module (required)
+    implementation("com.github.jogcaetano13.communication:communication-core:latest_version")
     
-    // This dependency is optional, only if you want to make requests for livedata or flow
-    implementation("com.github.jogcaetano13.communication:communication-android:<latest_version>")
+    // Android-specific extensions (optional)
+    // Only if you need LiveData or Flow responses
+    implementation("com.github.jogcaetano13.communication:communication-android:latest_version")
 
-    // This dependency is optional, only if you want to make requests for paging
-    implementation("com.github.jogcaetano13.communication:communication-paging:<latest_version>")
+    // Pagination support (optional)
+    // Only if you need pagination functionality
+    implementation("com.github.jogcaetano13.communication:communication-paging:latest_version")
 }
 ```
 
-## Using
+Replace `latest_version` with the current release version from JitPack.
 
-### Initiation
+## 🚀 Getting Started
 
-Initiate the client in singleton class or dependency injection
+### Initialize the Client
+
+Create a client instance in your application class, a singleton, or your dependency injection setup:
 
 ```kotlin
 val client = communicationClient {
-    baseUrl = BASE_URL
+    baseUrl = "https://api.example.com"
+    
+    // Optional: Add default headers
+    headers {
+        "Content-Type" to "application/json"
+        "Authorization" to "Bearer YOUR_TOKEN"
+    }
 }
 ```
-*You can add another customization, like header.*
 
-### Making a request
+### Making Simple Requests
 
-To make a request, you only need to invoke the call function in the Client instance.
-
-##### Normal response
-
-````kotlin
-val response: ComunicationResponse = client.call {
-    path = PATH
-    
-}.response()
-````
-
-You can also call and deserialize to a specific object
-
-````kotlin
-val response: Model = client.call {
-    path = PATH
-    
-}.responseToModel<Model>()
-````
-
-##### Flow (Only available in communication-android)
+#### Basic Request
 
 ```kotlin
-val response: Flow<ResultState<Model>> = client.call {
-    path = PATH
+val response: ComunicationResponse = client.call {
+    path = "/users"
+    method = HttpMethod.Get
+}.response()
+```
 
-    parameter(key to value)
+#### Deserialize to a Model
 
+```kotlin
+val user: User = client.call {
+    path = "/users/1"
+}.responseToModel<User>()
+```
+
+### Working with Flow (Android Extension)
+
+Retrieve data as a Flow with built-in state handling:
+
+```kotlin
+val userFlow: Flow<ResultState<User>> = client.call {
+    path = "/users/1"
+    parameter("include" to "details")
 }.responseFlow()
 ```
 
-###### You can add more customization like change the method, replace local call on success response and observing that local data
+You can also customize the flow response behavior:
 
 ```kotlin
-val response: Flow<ResultState<Model>> = client.call {
-    path = PATH
-    method = HttpMethod.Post
-
-}.responseFlow {
-    onNetworkSuccess { data ->
-        /* Do anything with the response, like replace local database data */
+val usersFlow = client.call {
+    path = "/users"
+    method = HttpMethod.Get
+}.responseFlow<List<User>> {
+    // Handle successful network response
+    onNetworkSuccess { users ->
+        // Save to local database
+        userDao.insertAll(users)
     }
     
+    // Observe local data source
     local {
-        observe { /* Keep track on local database changes */ }
+        observe { userDao.getAllUsers() }
     }
 }
 ```
 
-##### Paging response (Only available in communication-paging)
+### Observing Flow Responses
 
-You don't need to provide the page, it will be increased automatically when it needs.
-
-```kotlin
-val response: Flow<PagingData<Model>> = call {
-    path = PATH
-
-    parameter(key, value)
-}.responsePaginated {
-    onlyApiCall = true
-
-    // You can also change the parameter "page" name
-    pageQueryName = "wherever your page parameter is called"
-
-    // These 3 functions are mandatory if 'onlyApiCall' is false
-    pagingSource {  }
-    deleteAll {  }
-    insertAll {  }
-
-    // If you want to show loading only if it hasn't items, provide the first nullable item from database,
-    // otherwise, loading will trigger every time the screen is opened.
-    firstItemDatabase { /* The first item of the database in flow */ }
-}
-```
-
-The response paginated doesn't return a state, so you need to handle the loading and errors in the ui, for example:
+Using lifecycle-aware collection:
 
 ```kotlin
-lifecycleScope.launch { 
-    adapter.loadStateFlow.collectLatest {
-        if (it.refresh is LoadState.Error) {
-            Toast.makeText(
-                this@MainActivity,
-                (it.refresh as LoadState.Error).error.message,
-                Toast.LENGTH_SHORT).show()
-        }
-
-        binding.loadingPb.isVisible = it.refresh is LoadState.Loading
+userFlow.observe(viewLifecycleOwner) { state ->
+    when(state) {
+        is ResultState.Loading -> showLoading()
+        is ResultState.Success -> showUsers(state.data)
+        is ResultState.Error -> showError(state.exception.message)
+        is ResultState.Empty -> showEmptyState()
     }
 }
 ```
 
-For the loading and error when load more, you need to create a LoadStateAdapter.
-
-##### Using the response flow
-
-*Don't need to launch a coroutine in another thread, the library does it internally.*
-
-```kotlin
-response.observe(this) {
-    when(it) {
-        is ResultState.Error -> {}
-        is ResultState.Loading -> {}
-        is ResultState.Empty -> {}
-        is ResultState.Success -> {}
-    }
-}
-```
+Using coroutines:
 
 ```kotlin
 lifecycleScope.launch {
-    response.collectLatest {
-        when(it) {
-            ResultState.Empty -> {}
-            is ResultState.Error -> {}
-            ResultState.Loading -> {}
-            is ResultState.Success -> {}
+    userFlow.collectLatest { state ->
+        when(state) {
+            is ResultState.Loading -> showLoading()
+            is ResultState.Success -> showUsers(state.data)
+            is ResultState.Error -> showError(state.exception.message)
+            is ResultState.Empty -> showEmptyState()
         }
     }
 }
 ```
 
-## License
+### Pagination (Paging Extension)
 
-MIT
+Easy integration with Android's Paging 3 library:
+
+```kotlin
+val pagedUsers: Flow<PagingData<User>> = client.call {
+    path = "/users"
+    parameter("size" to 20)
+}.responsePaginated {
+    // Use API-only pagination or combine with local storage
+    onlyApiCall = true
+    
+    // Customize the page parameter name (default is "page")
+    pageQueryName = "page"
+    
+    // If using local storage (when onlyApiCall = false)
+    pagingSource { userDao.getPagingSource() }
+    deleteAll { userDao.deleteAll() }
+    insertAll { users -> userDao.insertAll(users) }
+    
+    // Optional: Optimize initial loading state
+    firstItemDatabase { userDao.getFirstUser() }
+}
+```
+
+### Handling Pagination States
+
+```kotlin
+// Observe loading states
+lifecycleScope.launch { 
+    adapter.loadStateFlow.collectLatest { loadState ->
+        // Handle refresh loading state
+        binding.progressBar.isVisible = loadState.refresh is LoadState.Loading
+        
+        // Handle refresh error state
+        if (loadState.refresh is LoadState.Error) {
+            val error = (loadState.refresh as LoadState.Error).error
+            showErrorMessage(error.message)
+        }
+    }
+}
+
+// Add loading footer
+recyclerView.adapter = userAdapter.withLoadStateFooter(
+    footer = LoadingStateAdapter(
+        retry = { userAdapter.retry() }
+    )
+)
+```
+
+## 📋 Advanced Configuration
+
+### Custom Headers
+
+```kotlin
+client.call {
+    path = "/secure-endpoint"
+    headers {
+        "Authorization" to "Bearer $token"
+        "X-Custom-Header" to "CustomValue"
+    }
+}.responseFlow<SecureData>()
+```
+
+### Request Parameters
+
+```kotlin
+client.call {
+    path = "/users"
+    parameter("role" to "admin")
+    parameter("active" to true)
+}.responseFlow<List<User>>()
+```
+
+### Error Handling
+
+The library provides several ways to handle errors:
+
+```kotlin
+try {
+    val response = client.call {
+        path = "/might-fail"
+    }.responseToModel<Data>()
+} catch (e: CommunicationException) {
+    // Handle communication errors
+    when (e) {
+        is NetworkException -> // Handle network errors
+        is SerializationException -> // Handle parsing errors
+        is HttpException -> {
+            // Access HTTP error details
+            val statusCode = e.code
+            val errorBody = e.errorBody
+        }
+    }
+}
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
