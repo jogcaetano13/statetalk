@@ -2,7 +2,11 @@ package com.joel.communication_android.deserializables
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import com.joel.communication_android.builders.ResponseBuilder
+import com.joel.communication_core.builders.ResponseBuilder
+import com.joel.communication_core.deserializables.responseFlow
+import com.joel.communication_core.deserializables.responseListFlow
+import com.joel.communication_core.deserializables.responseWrappedFlow
+import com.joel.communication_core.deserializables.responseWrappedListFlow
 import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_core.states.ResultState
 

@@ -2,9 +2,9 @@ package com.joel.jlibtemplate.respositories
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
-import com.joel.communication_android.deserializables.responseListFlow
 import com.joel.communication_core.alias.Header
 import com.joel.communication_core.client.Client
+import com.joel.communication_core.deserializables.responseListFlow
 import com.joel.communication_core.deserializables.responseToModel
 import com.joel.communication_core.enums.HttpHeader
 import com.joel.communication_core.states.ResultState

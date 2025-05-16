@@ -1,4 +1,4 @@
-package com.joel.communication_android.extensions
+package com.joel.communication_core.exceptions
 
 import com.joel.communication_core.enums.ErrorResponseType
 import com.joel.communication_core.response.CommunicationResponse

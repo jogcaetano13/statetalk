@@ -1,4 +1,4 @@
-package com.joel.communication_android.builders
+package com.joel.communication_core.builders
 
 import com.joel.communication_core.annotations.CommunicationsMarker
 

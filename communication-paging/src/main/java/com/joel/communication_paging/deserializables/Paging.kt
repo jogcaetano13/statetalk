@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.joel.communication_android.deserializables.responseAsync
+import com.joel.communication_core.deserializables.responseAsync
 import com.joel.communication_core.exceptions.CommunicationsException
 import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_paging.builders.PagingBuilder

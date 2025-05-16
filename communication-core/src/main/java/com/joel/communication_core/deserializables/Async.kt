@@ -1,12 +1,12 @@
-package com.joel.communication_android.deserializables
+package com.joel.communication_core.deserializables
 
-import com.joel.communication_android.builders.ResponseBuilder
-import com.joel.communication_android.extensions.toEnvelopeList
-import com.joel.communication_android.extensions.toError
-import com.joel.communication_android.extensions.toList
-import com.joel.communication_android.extensions.toModel
-import com.joel.communication_android.extensions.toModelWrapped
+import com.joel.communication_core.builders.ResponseBuilder
 import com.joel.communication_core.enums.ErrorResponseType
+import com.joel.communication_core.exceptions.toError
+import com.joel.communication_core.extensions.toEnvelopeList
+import com.joel.communication_core.extensions.toList
+import com.joel.communication_core.extensions.toModel
+import com.joel.communication_core.extensions.toModelWrapped
 import com.joel.communication_core.request.CommunicationRequest
 import com.joel.communication_core.response.CommunicationResponse
 import com.joel.communication_core.response.ErrorResponse

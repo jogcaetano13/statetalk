@@ -1,4 +1,4 @@
-package com.joel.communication_android.envelope
+package com.joel.communication_core.envelope
 
 import com.google.gson.annotations.SerializedName
 
