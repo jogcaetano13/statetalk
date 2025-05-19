@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.joel.statetalk_core.envelope.Envelope
 import com.joel.statetalk_core.envelope.EnvelopeList
-import com.joel.statetalk_core.response.CommunicationResponse
+import com.joel.statetalk_core.response.StateTalkResponse
 
 internal fun <T> T.toJson(datePattern: String): String {
     val type = object : TypeToken<T>() {}.type
@@ -13,25 +13,25 @@ internal fun <T> T.toJson(datePattern: String): String {
 }
 
 @PublishedApi
-internal inline fun <reified T> CommunicationResponse.toList(datePattern: String): List<T> {
+internal inline fun <reified T> StateTalkResponse.toList(datePattern: String): List<T> {
     val type = object : TypeToken<EnvelopeList<T>>() {}.type
     return createGson(datePattern).fromJson(body?.string(), type)
 }
 
 @PublishedApi
-internal inline fun <reified T> CommunicationResponse.toModelWrapped(datePattern: String): T? {
+internal inline fun <reified T> StateTalkResponse.toModelWrapped(datePattern: String): T? {
     val type = object : TypeToken<Envelope<T>>() {}.type
     return createGson(datePattern).fromJson<Envelope<T>>(body?.string(), type).data
 }
 
 @PublishedApi
-internal inline fun <reified T> CommunicationResponse.toModel(datePattern: String): T {
+internal inline fun <reified T> StateTalkResponse.toModel(datePattern: String): T {
     val type = object : TypeToken<T>() {}.type
     return createGson(datePattern).fromJson(body?.string(), type)
 }
 
 @PublishedApi
-internal inline fun <reified T> CommunicationResponse.toEnvelopeList(datePattern: String): EnvelopeList<T> {
+internal inline fun <reified T> StateTalkResponse.toEnvelopeList(datePattern: String): EnvelopeList<T> {
     val type = object : TypeToken<EnvelopeList<T>>() {}.type
     return createGson(datePattern).fromJson(body?.string(), type)
 }

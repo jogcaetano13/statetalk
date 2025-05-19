@@ -6,7 +6,7 @@ import com.joel.statetalk_core.enums.HttpMethod
 import com.joel.statetalk_core.extensions.apiError
 import com.joel.statetalk_core.extensions.toHttpMethod
 import com.joel.statetalk_core.extensions.updateUrl
-import com.joel.statetalk_core.response.CommunicationResponse
+import com.joel.statetalk_core.response.StateTalkResponse
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,7 +15,7 @@ import okhttp3.Request
 import org.jetbrains.annotations.VisibleForTesting
 import java.net.URI
 
-class CommunicationRequest internal constructor(
+class StateTalkRequest internal constructor(
     @PublishedApi
     internal val requestBuilder: Request.Builder,
     @PublishedApi
@@ -56,7 +56,7 @@ class CommunicationRequest internal constructor(
     companion object {
 
         @VisibleForTesting
-        fun testRequest() = CommunicationRequest(
+        fun testRequest() = StateTalkRequest(
             Request.Builder(),
             RequestBuilder(OkHttpClient(), "baseUrl"),
             OkHttpClient(),
@@ -64,19 +64,19 @@ class CommunicationRequest internal constructor(
         )
     }
 
-    suspend fun response(): CommunicationResponse {
+    suspend fun response(): StateTalkResponse {
         return try {
             val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
 
             if (response.isSuccessful) {
-                CommunicationResponse(
+                StateTalkResponse(
                     code = response.code,
                     headers = headers,
                     body = response.body,
                     errorBody = null
                 )
             } else {
-                CommunicationResponse(
+                StateTalkResponse(
                     code = response.code,
                     headers = headers,
                     body = null,
@@ -89,7 +89,7 @@ class CommunicationRequest internal constructor(
                 throw e
             }
 
-            CommunicationResponse(
+            StateTalkResponse(
                 code = 500,
                 headers = headers,
                 body = null,

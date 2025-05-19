@@ -2,16 +2,16 @@ package com.joel.statetalk_core.deserializables
 
 import com.joel.statetalk_core.builders.ResponseBuilder
 import com.joel.statetalk_core.enums.ErrorResponseType
-import com.joel.statetalk_core.exceptions.CommunicationsException
+import com.joel.statetalk_core.exceptions.StateTalkException
 import com.joel.statetalk_core.exceptions.toError
 import com.joel.statetalk_core.extensions.apiError
 import com.joel.statetalk_core.extensions.toEnvelopeList
 import com.joel.statetalk_core.extensions.toList
 import com.joel.statetalk_core.extensions.toModel
 import com.joel.statetalk_core.extensions.toModelWrapped
-import com.joel.statetalk_core.request.CommunicationRequest
-import com.joel.statetalk_core.response.CommunicationResponse
+import com.joel.statetalk_core.request.StateTalkRequest
 import com.joel.statetalk_core.response.ErrorResponse
+import com.joel.statetalk_core.response.StateTalkResponse
 import com.joel.statetalk_core.states.ResultState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +31,7 @@ import kotlinx.coroutines.withContext
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseFlow(
+inline fun <reified T : Any> StateTalkRequest.responseFlow(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ): Flow<ResultState<T>> {
     return toFlow(
@@ -48,7 +48,7 @@ inline fun <reified T : Any> CommunicationRequest.responseFlow(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
+inline fun <reified T : Any> StateTalkRequest.responseWrappedFlow(
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit = {}
 ): Flow<ResultState<T>> {
     return toFlow(
@@ -64,7 +64,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedFlow(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseListFlow(
+inline fun <reified T : Any> StateTalkRequest.responseListFlow(
     crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
 ): Flow<ResultState<List<T>>> {
     return toFlow(
@@ -80,7 +80,7 @@ inline fun <reified T : Any> CommunicationRequest.responseListFlow(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseWrappedListFlow(
+inline fun <reified T : Any> StateTalkRequest.responseWrappedListFlow(
     crossinline responseBuilder: ResponseBuilder<List<T>>.() -> Unit = {}
 ): Flow<ResultState<List<T>>> {
     return toFlow(
@@ -90,14 +90,14 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedListFlow(
 }
 
 @PublishedApi
-internal inline fun <reified T : Any> CommunicationRequest.toFlow(
+internal inline fun <reified T : Any> StateTalkRequest.toFlow(
     crossinline responseBuilder: ResponseBuilder<T>.() -> Unit,
-    crossinline deserializeBlock: (CommunicationResponse) -> T?
+    crossinline deserializeBlock: (StateTalkResponse) -> T?
 ): Flow<ResultState<T>> = channelFlow {
     val response = ResponseBuilder<T>().also(responseBuilder)
 
     if (response.offlineBuilder?.onlyLocalCall == true && (response.offlineBuilder?.callFlow == null && response.offlineBuilder?.call == null))
-        throw CommunicationsException("You must invoke the 'call()' functions to make only offline calls!")
+        throw StateTalkException("You must invoke the 'call()' functions to make only offline calls!")
 
     val localCall = withContext(Dispatchers.IO) {
         response.offlineBuilder?.call?.invoke() ?: response.offlineBuilder?.callFlow?.invoke()?.first()

@@ -9,13 +9,13 @@ import com.joel.jlibtemplate.room.AppDatabase
 import com.joel.jlibtemplate.room.daos.ChallengeDao
 import com.joel.statetalk_core.client.Client
 import com.joel.statetalk_core.client.ClientBuilder
-import com.joel.statetalk_core.extensions.communicationClient
+import com.joel.statetalk_core.extensions.stateTalkClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 fun clientModule(builder: ClientBuilder. () -> Unit) = module {
-    single { communicationClient(builder) }
+    single { stateTalkClient(builder) }
 }
 
 fun repositoriesModule() = module {

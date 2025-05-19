@@ -3,7 +3,7 @@ package com.joel.statetalk_core.response
 import com.joel.statetalk_core.alias.Header
 import okhttp3.ResponseBody
 
-class CommunicationResponse internal constructor(
+class StateTalkResponse internal constructor(
     val code: Int,
     val headers: List<Header>,
     val body: ResponseBody?,

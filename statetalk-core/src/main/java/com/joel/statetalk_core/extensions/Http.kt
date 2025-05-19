@@ -8,6 +8,6 @@ import com.joel.statetalk_core.client.ClientBuilder
  *
  * @return The client to start a new request
  */
-fun communicationClient(builder: ClientBuilder. () -> Unit): Client {
+fun stateTalkClient(builder: ClientBuilder. () -> Unit): Client {
     return ClientBuilder().also(builder).build()
 }

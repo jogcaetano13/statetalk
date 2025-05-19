@@ -1,9 +1,9 @@
 package com.joel.statetalk_core.builders
 
-import com.joel.statetalk_core.annotations.CommunicationsMarker
+import com.joel.statetalk_core.annotations.StateTalkMarker
 import kotlinx.coroutines.flow.Flow
 
-@CommunicationsMarker
+@StateTalkMarker
 class OfflineBuilder<T> internal constructor() {
 
     /**

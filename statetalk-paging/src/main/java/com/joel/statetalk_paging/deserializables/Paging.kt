@@ -5,8 +5,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.joel.statetalk_core.deserializables.responseAsync
-import com.joel.statetalk_core.exceptions.CommunicationsException
-import com.joel.statetalk_core.request.CommunicationRequest
+import com.joel.statetalk_core.exceptions.StateTalkException
+import com.joel.statetalk_core.request.StateTalkRequest
 import com.joel.statetalk_paging.builders.PagingBuilder
 import com.joel.statetalk_paging.models.PagingModel
 import com.joel.statetalk_paging.sources.NetworkPagingSource
@@ -14,13 +14,13 @@ import com.joel.statetalk_paging.sources.RemoteAndLocalPagingSource
 import kotlinx.coroutines.flow.Flow
 
 @ExperimentalPagingApi
-inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
+inline fun <reified T : PagingModel> StateTalkRequest.responsePaginated(
     crossinline builder: PagingBuilder<T>. () -> Unit = {}
 ): Flow<PagingData<T>> {
     val pagingBuilder = PagingBuilder<T>().also(builder)
 
     if (pagingBuilder.onlyApiCall.not() && pagingBuilder.itemsDataSource == null)
-        throw CommunicationsException("Items datasource must not be null!")
+        throw StateTalkException("Items datasource must not be null!")
 
     this@responsePaginated.immutableRequestBuilder.preCall?.invoke()
 
@@ -51,7 +51,7 @@ inline fun <reified T : PagingModel> CommunicationRequest.responsePaginated(
 }
 
 @PublishedApi
-internal fun CommunicationRequest.updateUrlPage(pageQueryName: String, page: Int) {
+internal fun StateTalkRequest.updateUrlPage(pageQueryName: String, page: Int) {
     immutableRequestBuilder.updateParameter(pageQueryName, page)
     updateUrl()
 }

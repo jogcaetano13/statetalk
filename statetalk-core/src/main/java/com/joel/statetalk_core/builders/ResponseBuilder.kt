@@ -1,8 +1,8 @@
 package com.joel.statetalk_core.builders
 
-import com.joel.statetalk_core.annotations.CommunicationsMarker
+import com.joel.statetalk_core.annotations.StateTalkMarker
 
-@CommunicationsMarker
+@StateTalkMarker
 class ResponseBuilder<T> @PublishedApi internal constructor(){
 
     @PublishedApi

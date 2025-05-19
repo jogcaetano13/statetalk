@@ -7,7 +7,7 @@ import com.joel.statetalk_core.deserializables.responseFlow
 import com.joel.statetalk_core.deserializables.responseListFlow
 import com.joel.statetalk_core.deserializables.responseWrappedFlow
 import com.joel.statetalk_core.deserializables.responseWrappedListFlow
-import com.joel.statetalk_core.request.CommunicationRequest
+import com.joel.statetalk_core.request.StateTalkRequest
 import com.joel.statetalk_core.states.ResultState
 
 /**
@@ -17,7 +17,7 @@ import com.joel.statetalk_core.states.ResultState
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseLiveData(
+inline fun <reified T : Any> StateTalkRequest.responseLiveData(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ) = responseFlow(responseBuilder).asLiveData()
 
@@ -29,7 +29,7 @@ inline fun <reified T : Any> CommunicationRequest.responseLiveData(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseWrappedLiveData(
+inline fun <reified T : Any> StateTalkRequest.responseWrappedLiveData(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ) = responseWrappedFlow(responseBuilder).asLiveData()
 
@@ -40,7 +40,7 @@ inline fun <reified T : Any> CommunicationRequest.responseWrappedLiveData(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseListLiveData(
+inline fun <reified T : Any> StateTalkRequest.responseListLiveData(
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
 ) = responseListFlow(responseBuilder).asLiveData()
 
@@ -52,6 +52,6 @@ inline fun <reified T : Any> CommunicationRequest.responseListLiveData(
  *
  * It's offline first and it handles the loading and error, then emits the results into a [ResultState]
  */
-inline fun <reified T : Any> CommunicationRequest.responseWrappedListLiveData(
+inline fun <reified T : Any> StateTalkRequest.responseWrappedListLiveData(
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
 ) = responseWrappedListFlow(responseBuilder).asLiveData()

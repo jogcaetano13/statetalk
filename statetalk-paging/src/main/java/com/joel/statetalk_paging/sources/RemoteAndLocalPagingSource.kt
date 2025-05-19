@@ -5,7 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.joel.statetalk_core.envelope.EnvelopeList
-import com.joel.statetalk_core.exceptions.CommunicationsException
+import com.joel.statetalk_core.exceptions.StateTalkException
 import com.joel.statetalk_core.states.AsyncState
 import com.joel.statetalk_paging.builders.PagingBuilder
 import com.joel.statetalk_paging.models.PagingModel
@@ -66,13 +66,13 @@ internal class RemoteAndLocalPagingSource<T : PagingModel>(
 
                     if (loadType == LoadType.REFRESH && builder.deleteOnRefresh) {
                         if (builder.deleteAll == null)
-                            throw CommunicationsException("You must implement 'deleteAll()' function if 'deleteOnRefresh' is true!")
+                            throw StateTalkException("You must implement 'deleteAll()' function if 'deleteOnRefresh' is true!")
 
                         builder.deleteAll?.invoke()
                     }
 
                     if (builder.insertAll == null)
-                        throw CommunicationsException("You must implement 'insertAll()' function!")
+                        throw StateTalkException("You must implement 'insertAll()' function!")
 
                     builder.insertAll?.invoke(envelopeList.data)
 

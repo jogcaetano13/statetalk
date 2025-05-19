@@ -248,8 +248,8 @@ try {
     val response = client.call {
         path = "/might-fail"
     }.responseToModel<Data>()
-} catch (e: CommunicationException) {
-    // Handle communication errors
+} catch (e: stateTalkException) {
+    // Handle stateTalk errors
     when (e) {
         is NetworkException -> // Handle network errors
         is SerializationException -> // Handle parsing errors

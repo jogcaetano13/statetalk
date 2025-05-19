@@ -1,10 +1,10 @@
-package com.joel.communication.extensions
+package com.joel.statetalk.extensions
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.joel.communication.envelope.Envelope
-import com.joel.communication.envelope.EnvelopeList
+import com.joel.statetalk.envelope.Envelope
+import com.joel.statetalk.envelope.EnvelopeList
 
 @PublishedApi
 internal inline fun <reified T> String.toList(datePattern: String): List<T> {

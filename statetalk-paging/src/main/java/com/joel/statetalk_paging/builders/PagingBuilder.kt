@@ -2,12 +2,12 @@ package com.joel.statetalk_paging.builders
 
 import androidx.paging.LoadType
 import androidx.paging.PagingSource
-import com.joel.statetalk_core.annotations.CommunicationsMarker
+import com.joel.statetalk_core.annotations.StateTalkMarker
 import com.joel.statetalk_paging.models.PagingModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
-@CommunicationsMarker
+@StateTalkMarker
 class PagingBuilder<T : PagingModel> @PublishedApi internal constructor() {
 
     /**

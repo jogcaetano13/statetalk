@@ -1,9 +1,9 @@
-package com.joel.communication.response
+package com.joel.statetalk.response
 
-import com.joel.communication.annotations.CommunicationsMarker
-import com.joel.communication.builders.OfflineBuilder
+import com.joel.statetalk.annotations.StateTalkMarker
+import com.joel.statetalk.builders.OfflineBuilder
 
-@CommunicationsMarker
+@StateTaklMarker
 class ResponseBuilder<T> @PublishedApi internal constructor(){
 
     @PublishedApi

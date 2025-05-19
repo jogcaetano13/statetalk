@@ -3,7 +3,7 @@ package com.joel.statetalk_android.deserializables
 import com.joel.statetalk_android.extensions.toJsonObject
 import com.joel.statetalk_core.enums.ErrorResponseType
 import com.joel.statetalk_core.exceptions.toError
-import com.joel.statetalk_core.request.CommunicationRequest
+import com.joel.statetalk_core.request.StateTalkRequest
 import com.joel.statetalk_core.response.ErrorResponse
 import com.joel.statetalk_core.states.AsyncState
 import org.json.JSONObject
@@ -18,7 +18,7 @@ import org.json.JSONObject
  *
  * @return [AsyncState]
  */
-suspend fun CommunicationRequest.responseJsonObject() : AsyncState<JSONObject> {
+suspend fun StateTalkRequest.responseJsonObject() : AsyncState<JSONObject> {
     val callResponse = response()
 
     return if (callResponse.isSuccess) {

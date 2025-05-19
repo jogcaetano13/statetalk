@@ -1,10 +1,10 @@
 package com.joel.statetalk_core.client
 
-import com.joel.statetalk_core.annotations.CommunicationsMarker
+import com.joel.statetalk_core.annotations.StateTalkMarker
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-@CommunicationsMarker
+@StateTalkMarker
 class TimeoutBuilder internal constructor() {
 
     /**

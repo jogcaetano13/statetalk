@@ -5,11 +5,11 @@ import com.joel.statetalk_core.alias.Header
 import com.joel.statetalk_core.alias.Headers
 import com.joel.statetalk_core.alias.Parameter
 import com.joel.statetalk_core.alias.Parameters
-import com.joel.statetalk_core.annotations.CommunicationsMarker
+import com.joel.statetalk_core.annotations.StateTalkMarker
 import com.joel.statetalk_core.client.interceptors.CustomHeaderInterceptor
 import com.joel.statetalk_core.enums.HttpHeader
 import com.joel.statetalk_core.enums.HttpMethod
-import com.joel.statetalk_core.exceptions.CommunicationsException
+import com.joel.statetalk_core.exceptions.StateTalkException
 import com.joel.statetalk_core.extensions.toJson
 import com.joel.statetalk_core.extensions.toName
 import com.joel.statetalk_core.extensions.urlWithPath
@@ -22,7 +22,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.util.Date
 
-@CommunicationsMarker
+@StateTalkMarker
 class RequestBuilder internal constructor(
     private val client: OkHttpClient,
     private val baseUrl: String
@@ -109,7 +109,7 @@ class RequestBuilder internal constructor(
      */
     fun language(languageCode: String) {
         if (languageCode.length > 2 || languageCode.length < 2)
-            throw CommunicationsException("Language code must contains only 2 characters")
+            throw StateTalkException("Language code must contains only 2 characters")
 
         if (hasHeader(HttpHeader.ACCEPT_LANGUAGE).not()) {
             val header = Header(HttpHeader.ACCEPT_LANGUAGE, languageCode)

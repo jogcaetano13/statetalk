@@ -2,19 +2,19 @@ package com.joel.statetalk_core.client
 
 import com.joel.statetalk_core.alias.Header
 import com.joel.statetalk_core.alias.Headers
-import com.joel.statetalk_core.annotations.CommunicationsMarker
+import com.joel.statetalk_core.annotations.StateTalkMarker
 import com.joel.statetalk_core.cache.CacheBuilder
 import com.joel.statetalk_core.client.interceptors.CustomHeaderInterceptor
 import com.joel.statetalk_core.enums.HttpHeader
 import com.joel.statetalk_core.enums.LogLevel
-import com.joel.statetalk_core.exceptions.CommunicationsException
+import com.joel.statetalk_core.exceptions.StateTalkException
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
-@CommunicationsMarker
+@StateTalkMarker
 class ClientBuilder internal constructor() {
     private val headers: Headers = mutableListOf()
     private val timeoutBuilder = TimeoutBuilder()
@@ -61,7 +61,7 @@ class ClientBuilder internal constructor() {
      */
     fun language(languageCode: String) {
         if (languageCode.length != 2)
-            throw CommunicationsException("Language code must contains only 2 characters")
+            throw StateTalkException("Language code must contains only 2 characters")
 
         if (hasHeader(HttpHeader.ACCEPT_LANGUAGE).not()) {
             val header = Header(HttpHeader.ACCEPT_LANGUAGE, languageCode)

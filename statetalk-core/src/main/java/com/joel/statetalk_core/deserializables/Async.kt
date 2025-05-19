@@ -7,9 +7,9 @@ import com.joel.statetalk_core.extensions.toEnvelopeList
 import com.joel.statetalk_core.extensions.toList
 import com.joel.statetalk_core.extensions.toModel
 import com.joel.statetalk_core.extensions.toModelWrapped
-import com.joel.statetalk_core.request.CommunicationRequest
-import com.joel.statetalk_core.response.CommunicationResponse
+import com.joel.statetalk_core.request.StateTalkRequest
 import com.joel.statetalk_core.response.ErrorResponse
+import com.joel.statetalk_core.response.StateTalkResponse
 import com.joel.statetalk_core.states.AsyncState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
  *
  * @return [AsyncState] with success (with data as [T]) or error (with error as [ErrorResponse]).
  */
-suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
+suspend inline fun <reified T : Any> StateTalkRequest.responseAsync(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ): AsyncState<T> {
     return toAsync(
@@ -43,7 +43,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseAsync(
  *
  * @return [AsyncState] with success (with data as [List] of type [T]) or error (with error as [ErrorResponse]).
  */
-suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
+suspend inline fun <reified T : Any> StateTalkRequest.responseListAsync(
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
 ): AsyncState<List<T>> {
     return toAsync(
@@ -63,7 +63,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseListAsync(
  *
  * @return [AsyncState] with success (with data as [List] of type [T]) or error (with error as [ErrorResponse]).
  */
-suspend inline fun <reified T : Any> CommunicationRequest.responseWrappedListAsync(
+suspend inline fun <reified T : Any> StateTalkRequest.responseWrappedListAsync(
     crossinline responseBuilder: ResponseBuilder<List<T>>. () -> Unit = {}
 ): AsyncState<List<T>> {
     return toAsync(
@@ -83,7 +83,7 @@ suspend inline fun <reified T : Any> CommunicationRequest.responseWrappedListAsy
  *
  * @return [AsyncState] with success (with data as [T]) or error (with error as [ErrorResponse]).
  */
-suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
+suspend inline fun <reified T: Any> StateTalkRequest.responseWrappedAsync(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit = {}
 ): AsyncState<T> {
     return toAsync(
@@ -93,9 +93,9 @@ suspend inline fun <reified T: Any> CommunicationRequest.responseWrappedAsync(
 }
 
 @PublishedApi
-internal suspend inline fun <reified T: Any> CommunicationRequest.toAsync(
+internal suspend inline fun <reified T: Any> StateTalkRequest.toAsync(
     crossinline responseBuilder: ResponseBuilder<T>. () -> Unit,
-    deserializeBlock: (CommunicationResponse) -> T?
+    deserializeBlock: (StateTalkResponse) -> T?
 ): AsyncState<T> {
     val response = ResponseBuilder<T>().also(responseBuilder)
 

@@ -1,7 +1,7 @@
 package com.joel.statetalk_core.extensions
 
 import com.joel.statetalk_core.enums.HttpMethod
-import com.joel.statetalk_core.exceptions.CommunicationsException
+import com.joel.statetalk_core.exceptions.StateTalkException
 
 internal fun String.toHttpMethod(): HttpMethod = when(this) {
     "GET" -> HttpMethod.Get
@@ -10,7 +10,7 @@ internal fun String.toHttpMethod(): HttpMethod = when(this) {
     "DELETE" -> HttpMethod.Delete
     "PATCH" -> HttpMethod.Patch
     "HEAD" -> HttpMethod.Head
-    else -> throw CommunicationsException("Invalid HttpMethod: $this")
+    else -> throw StateTalkException("Invalid HttpMethod: $this")
 }
 
 internal fun HttpMethod.toName() = when(this) {
