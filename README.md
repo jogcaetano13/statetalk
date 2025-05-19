@@ -53,15 +53,15 @@ In your app module's `build.gradle` file:
 ```kotlin
 dependencies {
     // Core module (required)
-    implementation("com.github.jogcaetano13.communication:statetalk-core:latest_version")
+    implementation("com.github.jogcaetano13.statetalk:statetalk-core:latest_version")
     
     // Android-specific extensions (optional)
     // Only if you need LiveData or Flow responses
-    implementation("com.github.jogcaetano13.communication:statetalk-android:latest_version")
+    implementation("com.github.jogcaetano13.statetalk:statetalk-android:latest_version")
 
     // Pagination support (optional)
     // Only if you need pagination functionality
-    implementation("com.github.jogcaetano13.communication:statetalk-paging:latest_version")
+    implementation("com.github.jogcaetano13.statetalk:statetalk-paging:latest_version")
 }
 ```
 
