@@ -1,6 +1,6 @@
-# Communication
+# StateTalk
 
-[![JitPack](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/communication)
+[![JitPack](https://jitpack.io/v/jogcaetano13/statetalk.svg)](https://jitpack.io/#jogcaetano13/statetalk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight, flexible network library for Android written in Kotlin. The Communication library provides a clean and intuitive API for handling network requests with support for LiveData, Flow, object deserialization, and pagination.
@@ -53,15 +53,15 @@ In your app module's `build.gradle` file:
 ```kotlin
 dependencies {
     // Core module (required)
-    implementation("com.github.jogcaetano13.communication:communication-core:latest_version")
+    implementation("com.github.jogcaetano13.communication:statetalk-core:latest_version")
     
     // Android-specific extensions (optional)
     // Only if you need LiveData or Flow responses
-    implementation("com.github.jogcaetano13.communication:communication-android:latest_version")
+    implementation("com.github.jogcaetano13.communication:statetalk-android:latest_version")
 
     // Pagination support (optional)
     // Only if you need pagination functionality
-    implementation("com.github.jogcaetano13.communication:communication-paging:latest_version")
+    implementation("com.github.jogcaetano13.communication:statetalk-paging:latest_version")
 }
 ```
 
@@ -74,7 +74,7 @@ Replace `latest_version` with the current release version from JitPack.
 Create a client instance in your application class, a singleton, or your dependency injection setup:
 
 ```kotlin
-val client = communicationClient {
+val client = stateTalkClient {
     baseUrl = "https://api.example.com"
     
     // Optional: Add default headers
@@ -90,7 +90,7 @@ val client = communicationClient {
 #### Basic Request
 
 ```kotlin
-val response: ComunicationResponse = client.call {
+val response: stateTalkResponse = client.call {
     path = "/users"
     method = HttpMethod.Get
 }.response()
@@ -104,7 +104,7 @@ val user: User = client.call {
 }.responseToModel<User>()
 ```
 
-### Working with Flow (Android Extension)
+### Working with Flow
 
 Retrieve data as a Flow with built-in state handling:
 
