@@ -2,14 +2,14 @@ package com.joel.jlibtemplate.di
 
 import android.content.Context
 import androidx.room.Room
-import com.joel.communication_core.client.Client
-import com.joel.communication_core.client.ClientBuilder
-import com.joel.communication_core.extensions.communicationClient
 import com.joel.jlibtemplate.MainViewModel
 import com.joel.jlibtemplate.respositories.ChallengeRepository
 import com.joel.jlibtemplate.respositories.ChallengeRepositoryImpl
 import com.joel.jlibtemplate.room.AppDatabase
 import com.joel.jlibtemplate.room.daos.ChallengeDao
+import com.joel.statetalk_core.client.Client
+import com.joel.statetalk_core.client.ClientBuilder
+import com.joel.statetalk_core.extensions.communicationClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

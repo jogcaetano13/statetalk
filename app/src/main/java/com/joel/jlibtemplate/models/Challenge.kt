@@ -12,4 +12,4 @@ data class Challenge(
     val slug: String?,
     val completedAt: Date?,
     val completedLanguages: List<String>?
-) : com.joel.communication_paging.models.PagingModel()
+) : com.joel.statetalk_paging.models.PagingModel()

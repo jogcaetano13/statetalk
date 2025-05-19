@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.joel.communication_core.states.ResultState
 import com.joel.jlibtemplate.models.Challenge
 import com.joel.jlibtemplate.respositories.ChallengeRepository
+import com.joel.statetalk_core.states.ResultState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest

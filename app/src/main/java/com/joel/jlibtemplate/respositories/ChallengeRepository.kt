@@ -1,8 +1,8 @@
 package com.joel.jlibtemplate.respositories
 
 import androidx.paging.PagingData
-import com.joel.communication_core.states.ResultState
 import com.joel.jlibtemplate.models.Challenge
+import com.joel.statetalk_core.states.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface ChallengeRepository {

@@ -23,9 +23,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
-            <option value="$PROJECT_DIR$/communication-android" />
-            <option value="$PROJECT_DIR$/communication-core" />
-            <option value="$PROJECT_DIR$/communication-paging" />
+            <option value="$PROJECT_DIR$/statetalk-android" />
+            <option value="$PROJECT_DIR$/statetalk-core" />
+            <option value="$PROJECT_DIR$/statetalk-paging" />
           </set>
         </option>
       </GradleProjectSettings>
