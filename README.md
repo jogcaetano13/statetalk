@@ -1,6 +1,6 @@
 # StateTalk
 
-[![JitPack](https://jitpack.io/v/jogcaetano13/statetalk.svg)](https://jitpack.io/#jogcaetano13/statetalk)
+[![JitPack](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/statetalk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight, flexible network library for Android written in Kotlin. The Communication library provides a clean and intuitive API for handling network requests with support for LiveData, Flow, object deserialization, and pagination.
