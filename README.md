@@ -274,9 +274,9 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ## 🛠️ Roadmap
 
-✅ Android-only release
-🚧 Kotlin Multiplatform (KMP) support coming soon
-📚 Better docs, samples, and testing utilities
+- ✅ Android-only release
+- 🚧 Kotlin Multiplatform (KMP) support coming soon
+- 📚 Better docs, samples, and testing utilities
 
 ## 📝 License
 
