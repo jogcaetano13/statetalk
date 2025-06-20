@@ -1,9 +1,9 @@
-# StateTalk
+# Communication Android
 
-[![JitPack](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/statetalk)
+[![JitPack](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/communication)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A lightweight, flexible network library for Android written in Kotlin. The StateTalk library provides a clean and intuitive API for handling network requests with support for LiveData, Flow, object deserialization, and pagination.
+A lightweight, flexible network library for Android written in Kotlin. The Communication library provides a clean and intuitive API for handling network requests with support for LiveData, Flow, object deserialization, and pagination.
 
 ## 🌟 Features
 
@@ -53,15 +53,15 @@ In your app module's `build.gradle` file:
 ```kotlin
 dependencies {
     // Core module (required)
-    implementation("com.github.jogcaetano13.statetalk:statetalk-core:latest_version")
+    implementation("com.github.kmpbits.communication:communication-core:latest_version")
     
     // Android-specific extensions (optional)
     // Only if you need LiveData or Flow responses
-    implementation("com.github.jogcaetano13.statetalk:statetalk-android:latest_version")
+    implementation("com.github.kmpbits.communication:communication-android:latest_version")
 
     // Pagination support (optional)
     // Only if you need pagination functionality
-    implementation("com.github.jogcaetano13.statetalk:statetalk-paging:latest_version")
+    implementation("com.github.kmpbits.communication:communication-paging:latest_version")
 }
 ```
 
@@ -74,7 +74,7 @@ Replace `latest_version` with the current release version from JitPack.
 Create a client instance in your application class, a singleton, or your dependency injection setup:
 
 ```kotlin
-val client = stateTalkClient {
+val client = communicationClient {
     baseUrl = "https://api.example.com"
     
     // Optional: Add default headers
@@ -88,7 +88,7 @@ val client = stateTalkClient {
 #### Basic Request
 
 ```kotlin
-val response: stateTalkResponse = client.call {
+val response: communicationResponse = client.call {
     path = "/users"
     method = HttpMethod.Get
 }.response()
@@ -220,10 +220,7 @@ recyclerView.adapter = userAdapter.withLoadStateFooter(
 ```kotlin
 client.call {
     path = "/secure-endpoint"
-    headers {
-        "Authorization" to "Bearer $token"
-        "X-Custom-Header" to "CustomValue"
-    }
+    header(Header(HttpHeader.custom("X-Custom-Header"), "CustomValue"))
 }.responseFlow<SecureData>()
 ```
 
