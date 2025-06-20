@@ -6,7 +6,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Communication"
-include(":app")
+include(":sample")
 include(":communication-android")
 include(":communication-core")
 include(":communication-paging")
