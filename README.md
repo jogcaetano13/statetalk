@@ -1,6 +1,6 @@
 # Communication Android
 
-[![JitPack](https://jitpack.io/v/jogcaetano13/communication.svg)](https://jitpack.io/#jogcaetano13/communication)
+[![](https://jitpack.io/v/kmpbits/communication.svg)](https://jitpack.io/#kmpbits/communication)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight, flexible network library for Android written in Kotlin. The Communication library provides a clean and intuitive API for handling network requests with support for LiveData, Flow, object deserialization, and pagination.
