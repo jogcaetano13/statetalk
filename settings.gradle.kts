@@ -5,8 +5,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "stateTalk"
+rootProject.name = "Communication"
 include(":app")
-include(":statetalk-android")
-include(":statetalk-core")
-include(":statetalk-paging")
+include(":communication-android")
+include(":communication-core")
+include(":communication-paging")

@@ -1,0 +1,4 @@
+package com.kmpbits.communication_core.annotations
+
+@DslMarker
+annotation class CommunicationMarker

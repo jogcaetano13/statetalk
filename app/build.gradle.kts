@@ -8,7 +8,7 @@ android {
     compileSdk = Config.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "com.joel.jlibtemplate"
+        applicationId = "com.kmpbits.communicationexample"
         minSdk = Config.MIN_SDK
         targetSdk = Config.TARGET_SDK
         versionCode = 1
@@ -35,7 +35,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    namespace = "com.joel.jlibtemplate"
+    namespace = "com.kmpbits.communicationexample"
 }
 
 dependencies {
@@ -43,9 +43,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation(project(mapOf("path" to ":statetalk-android")))
-    implementation(project(mapOf("path" to ":statetalk-core")))
-    implementation(project(mapOf("path" to ":statetalk-paging")))
+    implementation(project(mapOf("path" to ":communication-android")))
+    implementation(project(mapOf("path" to ":communication-core")))
+    implementation(project(mapOf("path" to ":communication-paging")))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
