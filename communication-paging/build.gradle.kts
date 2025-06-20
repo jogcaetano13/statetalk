@@ -82,5 +82,5 @@ dependencies {
     // Paging
     api("androidx.paging:paging-runtime-ktx:3.3.6")
     api("androidx.paging:paging-common-ktx:3.3.6")
-    api("androidx.room:room-paging:2.7.1")
+    api("androidx.room:room-paging:2.7.2")
 }

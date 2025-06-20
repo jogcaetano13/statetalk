@@ -2,20 +2,20 @@ package com.kmpbits.communicationexample.di
 
 import android.content.Context
 import androidx.room.Room
+import com.kmpbits.communication_core.client.Client
+import com.kmpbits.communication_core.client.ClientBuilder
+import com.kmpbits.communication_core.extensions.communicationClient
 import com.kmpbits.communicationexample.MainViewModel
 import com.kmpbits.communicationexample.respositories.ChallengeRepository
 import com.kmpbits.communicationexample.respositories.ChallengeRepositoryImpl
 import com.kmpbits.communicationexample.room.AppDatabase
 import com.kmpbits.communicationexample.room.daos.ChallengeDao
-import com.kmpbits.communication_core.client.Client
-import com.kmpbits.communication_core.client.ClientBuilder
-import com.kmpbits.communication_core.extensions.stateTalkClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 fun clientModule(builder: ClientBuilder. () -> Unit) = module {
-    single { stateTalkClient(builder) }
+    single { communicationClient(builder) }
 }
 
 fun repositoriesModule() = module {
