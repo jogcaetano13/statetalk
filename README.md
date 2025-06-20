@@ -78,10 +78,8 @@ val client = stateTalkClient {
     baseUrl = "https://api.example.com"
     
     // Optional: Add default headers
-    headers {
-        "Content-Type" to "application/json"
-        "Authorization" to "Bearer YOUR_TOKEN"
-    }
+    header(Header(HttpHeader.CONTENT_TYPE, "application/json"))
+    header(Header(HttpHeader.custom("custom-header"), "This is a custom header"))
 }
 ```
 
