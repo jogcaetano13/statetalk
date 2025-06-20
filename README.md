@@ -56,7 +56,7 @@ dependencies {
     implementation("com.github.kmpbits.communication:communication-core:latest_version")
     
     // Android-specific extensions (optional)
-    // Only if you need LiveData or Flow responses
+    // Only if you need LiveData responses
     implementation("com.github.kmpbits.communication:communication-android:latest_version")
 
     // Pagination support (optional)
@@ -88,7 +88,7 @@ val client = communicationClient {
 #### Basic Request
 
 ```kotlin
-val response: communicationResponse = client.call {
+val response: CommunicationResponse = client.call {
     path = "/users"
     method = HttpMethod.Get
 }.response()
